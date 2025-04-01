@@ -5,33 +5,13 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 
-from users.models import Customer
 from orders.enum import OrderStatus
 from orders.models import Order
 from payment import robokassa
 from .serializers import (
-    CustomerCreateSerializer,
-    CustomerUpdateSerializer,
-    CustomerRetrieveSerializer,
     OrderCreateSerializer,
     OrderRetrieveSerializer,
 )
-
-
-class CustomerViewSet(mixins.CreateModelMixin,
-                      mixins.UpdateModelMixin,
-                      mixins.RetrieveModelMixin,
-                      viewsets.GenericViewSet):
-    queryset = Customer.objects.all()
-    lookup_field = 'telegram_id'
-    serializer_class = CustomerCreateSerializer
-
-    def get_serializer_class(self):
-        if self.action == 'update':
-            return CustomerUpdateSerializer
-        elif self.action == 'retrieve':
-            return CustomerRetrieveSerializer
-        return CustomerCreateSerializer
 
 
 class OrderViewSet(mixins.CreateModelMixin,
