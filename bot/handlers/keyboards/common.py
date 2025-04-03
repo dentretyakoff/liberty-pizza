@@ -1,0 +1,28 @@
+from aiogram.types import InlineKeyboardButton
+
+from handlers.keyboards.base import get_form_keyboard
+
+
+categoies_button = InlineKeyboardButton(
+    text='Товары',
+    callback_data='categoies'
+)
+orders_button = InlineKeyboardButton(
+    text='Заказы',
+    callback_data='orders'
+)
+cart_button = InlineKeyboardButton(
+    text='Корзина',
+    callback_data='cart'
+)
+areas_button = InlineKeyboardButton(
+    text='Адреса доставки',
+    callback_data='areas'
+)
+
+main_menu_keyboard = get_form_keyboard(
+    categoies_button,
+    orders_button,
+    cart_button,
+    areas_button
+)

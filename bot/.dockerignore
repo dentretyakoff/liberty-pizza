@@ -1,0 +1,10 @@
+# Файл .dockerignore
+venv
+.git
+.dockerignore
+docker-compose.yml
+Dockerfile
+__init__.py
+__pycache__
+*.pyc
+.env*
