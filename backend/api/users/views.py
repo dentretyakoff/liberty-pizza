@@ -18,7 +18,7 @@ class CustomerViewSet(mixins.CreateModelMixin,
     serializer_class = CustomerCreateSerializer
 
     def get_serializer_class(self):
-        if self.action == 'update':
+        if self.action == 'partial_update':
             return CustomerUpdateSerializer
         elif self.action in ['retrieve', 'list']:
             return CustomerRetrieveSerializer

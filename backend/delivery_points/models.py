@@ -1,6 +1,7 @@
 from django.db import models
 
 from base.models import BaseModel
+from users.models import Customer
 
 
 class Street(BaseModel):
@@ -44,3 +45,29 @@ class Area(BaseModel):
 
     def __str__(self):
         return f'{self.name}'
+
+
+class DeliveryPoint(BaseModel):
+    customer = models.ForeignKey(
+        Customer,
+        verbose_name='Клиент',
+        related_name='delivery_points',
+        on_delete=models.CASCADE
+    )
+    street = models.ForeignKey(
+        Street,
+        verbose_name='Улица',
+        related_name='delivery_points',
+        on_delete=models.PROTECT
+    )
+    house_number = models.CharField(
+        'Номер дома',
+        max_length=200
+    )
+
+    class Meta:
+        verbose_name = 'Точка доставки'
+        verbose_name_plural = 'Точки доставки'
+
+    def __str__(self):
+        return f'{self.id}'

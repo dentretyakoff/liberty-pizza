@@ -2,7 +2,7 @@ from aiogram import Router, F
 from aiogram.types import CallbackQuery
 from aiogram.methods import SendMessage
 
-from handlers.keyboards.base import back_to_main_keyboard
+from handlers.keyboards import back_to_main_keyboard
 
 router = Router()
 

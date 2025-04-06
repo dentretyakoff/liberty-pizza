@@ -12,10 +12,10 @@ class CustomerCreateSerializer(serializers.ModelSerializer):
 class CustomerUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Customer
-        fields = ('nickname',)
+        fields = ('nickname', 'phone')
 
 
 class CustomerRetrieveSerializer(serializers.ModelSerializer):
     class Meta:
         model = Customer
-        fields = ('id', 'telegram_id', 'nickname')
+        fields = ('id', 'telegram_id', 'nickname', 'phone')

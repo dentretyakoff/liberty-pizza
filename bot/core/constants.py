@@ -21,3 +21,7 @@ class OrderStatus:
     PAID = 'paid'
     AWAITING = 'awaiting'
     CANCELLED = 'cancelled'
+
+
+HOUSE_NUMBER_PATTERN = r'^[\d]+[\/\-\s]?[А-Яа-яA-Za-z0-9]*$'
+PHONE_PATTERN = r'^(?:\+7|8)\d{10}$'

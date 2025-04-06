@@ -1,12 +1,21 @@
-from core.constants import MessagesConstants
-from core.exceptions.validations import (
-    ValidationNoPaymentOrder
-)
+import re
+
+from core.constants import HOUSE_NUMBER_PATTERN, PHONE_PATTERN
+from core.exceptions.validations import ValidationError
 
 
-async def validate_no_payment_order(response: dict) -> dict:
-    """Проверяет существование неоплаченного заказа."""
-    if len(response) > 0:
-        raise ValidationNoPaymentOrder(
-            MessagesConstants.NO_PAYMENT_ORDER, response)
-    return response
+def validate_house_number(number: str) -> str:
+    """Проверяет номер дома для адреса доставки."""
+    if not re.match(HOUSE_NUMBER_PATTERN, number.strip()):
+        raise ValidationError(
+            'Некорректный номер дома, пожалуйста, попробуйте еще раз.')
+    return number.strip()
+
+
+def validate_phone_number(phone: str) -> str:
+    """Проверяет номер телефона клиента."""
+    if not re.match(PHONE_PATTERN, phone.strip()):
+        raise ValidationError(
+            'Некорректный номер телефона.\n'
+            'Пожалуйста введите в формате +71234567890 или 89123456789.')
+    return phone.strip()

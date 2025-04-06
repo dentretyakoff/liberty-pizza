@@ -2,7 +2,7 @@ from aiogram import Router, F
 from aiogram.types import CallbackQuery
 from aiogram.methods import SendMessage
 
-from handlers.keyboards.base import back_to_main_keyboard
+from handlers.keyboards import cart_menu
 
 router = Router()
 
@@ -12,4 +12,4 @@ async def cart(callback_query: CallbackQuery) -> SendMessage:
     """Корзина пользователя."""
     return await callback_query.message.edit_text(
         text='Тут будет корзина пользователя.',
-        reply_markup=back_to_main_keyboard)
+        reply_markup=cart_menu)

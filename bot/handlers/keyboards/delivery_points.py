@@ -1,6 +1,6 @@
 from aiogram.types import InlineKeyboardButton
 
-from handlers.keyboards.base import get_form_keyboard, back_to_main_button
+from handlers.keyboards.base import get_form_keyboard
 
 
 def generate_areas_buttons(areas: list):
@@ -11,7 +11,7 @@ def generate_areas_buttons(areas: list):
             callback_data=f'area_id_{area.get("id")}')
         for area in areas
     ]
-    buttons.append(back_to_main_button)
+    buttons.append(back_to_cart)
     return get_form_keyboard(*buttons)
 
 
@@ -19,15 +19,19 @@ def generate_streets_buttons(streets: list):
     """Генерирует кнопки выбора улицы."""
     buttons = [
         InlineKeyboardButton(
-            text=f'{area.get("name")} {area.get("cost")} руб.',
-            callback_data=f'area_id_{area.get("id")}')
-        for area in streets
+            text=f'{street.get("name")} {street.get("cost")} руб.',
+            callback_data=f'street_id_{street.get("id")}')
+        for street in streets
     ]
-    buttons.append(areas_button)
+    buttons.append(back_to_areas_button)
     return get_form_keyboard(*buttons)
 
 
-areas_button = InlineKeyboardButton(
+back_to_areas_button = InlineKeyboardButton(
     text='⬅️ Назад к списку зон',
     callback_data='areas'
+)
+back_to_cart = InlineKeyboardButton(
+    text='⬅️ Назад',
+    callback_data='cart'
 )

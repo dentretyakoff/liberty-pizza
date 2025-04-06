@@ -15,14 +15,10 @@ cart_button = InlineKeyboardButton(
     text='Корзина',
     callback_data='cart'
 )
-areas_button = InlineKeyboardButton(
-    text='Адреса доставки',
-    callback_data='areas'
-)
+
 
 main_menu_keyboard = get_form_keyboard(
     categoies_button,
     orders_button,
-    cart_button,
-    areas_button
+    cart_button
 )
