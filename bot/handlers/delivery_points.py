@@ -53,6 +53,17 @@ async def input_house_number(
     """Запоминает номер дома."""
     house_number = validate_house_number(message.text.strip())
     await state.update_data(house_number=house_number)
+    await message.answer('Введите номер подъезда:')
+    await state.set_state(AddressForm.entrance_number)
+
+
+@router.message(AddressForm.entrance_number)
+async def input_entrance_number(
+        message: Message,
+        state: FSMContext) -> SendMessage:
+    """Запоминает номер подъезда."""
+    entrance_number = validate_house_number(message.text.strip())
+    await state.update_data(entrance_number=entrance_number)
     data = await state.get_data()
     data['telegram_id'] = message.from_user.id
     await create_delivery_point(data)

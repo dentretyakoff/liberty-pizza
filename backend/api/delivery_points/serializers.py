@@ -26,7 +26,13 @@ class DeliveryPointCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = DeliveryPoint
-        fields = ('id', 'street', 'house_number', 'telegram_id')
+        fields = (
+            'id',
+            'street',
+            'house_number',
+            'telegram_id',
+            'entrance_number'
+        )
 
     def create(self, validated_data):
         telegram_id = validated_data.pop('telegram_id')
@@ -39,7 +45,8 @@ class DeliveryPointCreateSerializer(serializers.ModelSerializer):
         delivery_point, _ = DeliveryPoint.objects.get_or_create(
             customer=customer,
             street=validated_data.get('street'),
-            house_number=validated_data.get('house_number'))
+            house_number=validated_data.get('house_number'),
+            entrance_number=validated_data.get('entrance_number'))
         return delivery_point
 
 
@@ -55,4 +62,10 @@ class DeliveryPointSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = DeliveryPoint
-        fields = ('id', 'customer', 'street', 'house_number')
+        fields = (
+            'id',
+            'customer',
+            'street',
+            'house_number',
+            'entrance_number'
+        )

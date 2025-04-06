@@ -14,7 +14,9 @@ async def get_order_detail(telegram_id: int) -> str:
         '2. Пицца Четыре сезона - 1шт. 600р.\n'
         '3. Доставка - 220р.\n\n'
         'Итого: 1320р.\n\n'
-        f'Адрес: {delivery_point.get("street")}, {delivery_point.get("house_number")}\n'  # noqa
+        f'Адрес: {delivery_point.get("street")}, '
+        f'{delivery_point.get("house_number")}, '
+        f'подъезд {delivery_point.get("entrance_number")}\n'
         f'Телефон: {customer.get("phone")}'
     )
     return order_detail

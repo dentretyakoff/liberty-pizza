@@ -64,6 +64,9 @@ class DeliveryPoint(BaseModel):
         'Номер дома',
         max_length=200
     )
+    entrance_number = models.PositiveSmallIntegerField(
+        'Номер подъезда',
+    )
 
     class Meta:
         verbose_name = 'Точка доставки'
