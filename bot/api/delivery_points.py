@@ -7,10 +7,11 @@ async def get_areas():
     return areas
 
 
-async def get_streets(area_id: int):
+async def get_streets(area_id: int, limit: int, offset: int):
     """Получает улицы."""
     streets = await async_session(
-        f'delivery-points/streets/?area_id={area_id}', 'GET')
+        f'delivery-points/streets/?area_id={area_id}'
+        f'&limit={limit}&offset={offset}', 'GET')
     return streets
 
 

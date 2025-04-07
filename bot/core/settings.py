@@ -17,3 +17,5 @@ MAX_CHECK_PAYMENT_TIME = int(os.getenv('MAX_CHECK_PAYMENT_TIME', 1800))
 INTERVAL_CHECK_PAYMENT = int(os.getenv('INTERVAL_CHECK_PAYMENT', 30))
 # Максимальный срок оплаты
 ORDER_MAX_LIFE_TIME = int(os.getenv('EXPIRATION_DATE', 1200))
+# Элементов на страницу
+PAGE_SIZE = int(os.getenv('PAGE_SIZE', 10))

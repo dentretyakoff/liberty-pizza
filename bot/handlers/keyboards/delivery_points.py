@@ -1,6 +1,7 @@
 from aiogram.types import InlineKeyboardButton
 
-from handlers.keyboards.base import get_form_keyboard
+from core.settings import PAGE_SIZE
+from handlers.keyboards.base import get_form_keyboard, get_pagination_buttons
 
 
 def generate_areas_buttons(areas: list):
@@ -8,23 +9,32 @@ def generate_areas_buttons(areas: list):
     buttons = [
         InlineKeyboardButton(
             text=area.get('name'),
-            callback_data=f'area_id_{area.get("id")}')
+            callback_data=f'area_id_{area.get("id")}_{PAGE_SIZE}_0')
         for area in areas
     ]
     buttons.append(back_to_cart)
     return get_form_keyboard(*buttons)
 
 
-def generate_streets_buttons(streets: list):
+def generate_streets_buttons(data: dict, prefix: str):
     """Генерирует кнопки выбора улицы."""
+    streets = data.get('results')
     buttons = [
         InlineKeyboardButton(
-            text=f'{street.get("name")} {street.get("cost")} руб.',
+            text=f'{street.get("name")} - {street.get("cost")} руб.',
             callback_data=f'street_id_{street.get("id")}')
         for street in streets
     ]
-    buttons.append(back_to_areas_button)
-    return get_form_keyboard(*buttons)
+    pagination_buttons = get_pagination_buttons(
+        prefix=prefix,
+        next_url=data.get('next'),
+        prev_url=data.get('previous')
+    )
+    return get_form_keyboard(
+        *buttons,
+        one_row_buttons=pagination_buttons,
+        back_button=back_to_areas_button
+    )
 
 
 back_to_areas_button = InlineKeyboardButton(

@@ -27,6 +27,7 @@ class Street(BaseModel):
     class Meta:
         verbose_name = 'Улица'
         verbose_name_plural = 'Улицы'
+        ordering = ('name',)
 
     def __str__(self):
         return f'{self.name}'
@@ -42,6 +43,7 @@ class Area(BaseModel):
     class Meta:
         verbose_name = 'Зона доставки'
         verbose_name_plural = 'Зоны доставки'
+        ordering = ('name',)
 
     def __str__(self):
         return f'{self.name}'
@@ -71,6 +73,7 @@ class DeliveryPoint(BaseModel):
     class Meta:
         verbose_name = 'Точка доставки'
         verbose_name_plural = 'Точки доставки'
+        ordering = ('street__name',)
 
     def __str__(self):
         return f'{self.id}'

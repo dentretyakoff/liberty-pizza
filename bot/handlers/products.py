@@ -10,6 +10,6 @@ router = Router()
 @router.callback_query(F.data == 'categoies')
 async def categoies(callback_query: CallbackQuery) -> SendMessage:
     """Список категорий товраов."""
-    return await callback_query.message.edit_text(
+    await callback_query.message.edit_text(
         text='Тут будут товары',
         reply_markup=back_to_main_keyboard)

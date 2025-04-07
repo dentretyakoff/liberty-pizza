@@ -19,7 +19,8 @@ router = Router()
 @router.callback_query(F.data == 'areas')
 async def areas(callback_query: CallbackQuery) -> SendMessage:
     """Список зон доставки."""
-    areas = await get_areas()
+    data = await get_areas()
+    areas = data.get('results')
     await callback_query.message.edit_text(
         text='Выбери зону доставки',
         reply_markup=generate_areas_buttons(areas))
@@ -28,11 +29,14 @@ async def areas(callback_query: CallbackQuery) -> SendMessage:
 @router.callback_query(F.data.startswith('area_id_'))
 async def streets(callback_query: CallbackQuery) -> SendMessage:
     """Список улиц."""
-    area_id = int(callback_query.data.split('_')[-1])
-    streets = await get_streets(area_id)
+    parts = callback_query.data.split('_')
+    area_id = int(parts[2])
+    limit = int(parts[3])
+    offset = int(parts[4])
+    data = await get_streets(area_id, limit, offset)
     await callback_query.message.edit_text(
         text='Выбери улицу',
-        reply_markup=generate_streets_buttons(streets))
+        reply_markup=generate_streets_buttons(data, f'area_id_{area_id}'))
 
 
 @router.callback_query(F.data.startswith('street_id_'))
