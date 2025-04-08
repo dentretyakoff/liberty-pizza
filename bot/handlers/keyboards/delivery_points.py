@@ -2,6 +2,7 @@ from aiogram.types import InlineKeyboardButton
 
 from core.settings import PAGE_SIZE
 from handlers.keyboards.base import get_form_keyboard, get_pagination_buttons
+from handlers.keyboards.cart import areas_button
 
 
 def generate_areas_buttons(areas: list):
@@ -35,6 +36,20 @@ def generate_streets_buttons(data: dict, prefix: str):
         one_row_buttons=pagination_buttons,
         back_button=back_to_areas_button
     )
+
+
+def generate_my_delivery_points_buttons(delivery_points: dict):
+    """Генерирует кнопки выбора точки доставки."""
+    buttons = [
+        InlineKeyboardButton(
+            text=(f'{dp.get("street")}, '
+                  f'{dp.get("house_number")}, '
+                  f'подъезд {dp.get("entrance_number")}'),
+            callback_data=f'delivery_point_id_{dp.get("id")}')
+        for dp in delivery_points
+    ]
+    buttons.append(areas_button)
+    return get_form_keyboard(*buttons)
 
 
 back_to_areas_button = InlineKeyboardButton(

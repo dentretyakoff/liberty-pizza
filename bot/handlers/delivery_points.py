@@ -3,12 +3,19 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message
 from aiogram.methods import SendMessage
 
-from api.delivery_points import get_areas, get_streets, create_delivery_point
+from api.delivery_points import (
+    get_areas,
+    get_streets,
+    create_delivery_point,
+    get_my_delivery_points,
+    set_my_delivery_point
+)
 from api.users import get_customer
 from handlers.keyboards import (
     generate_areas_buttons,
     generate_streets_buttons,
-    generate_phone_buttons
+    generate_phone_buttons,
+    generate_my_delivery_points_buttons
 )
 from handlers.states import AddressForm, UserForm
 from core.validators import validate_house_number
@@ -79,4 +86,31 @@ async def input_entrance_number(
             text='Номер телефона для связи',
             reply_markup=generate_phone_buttons(phone))
     await message.answer('Введите номер телефона:')
+    await state.set_state(UserForm.phone)
+
+
+@router.callback_query(F.data == 'my_delivery_points')
+async def my_delivery_points(callback_query: CallbackQuery) -> SendMessage:
+    """Список точек доставки клиента."""
+    data = await get_my_delivery_points(callback_query.from_user.id)
+    delivery_points = data.get('results')
+    await callback_query.message.edit_text(
+        text='Выбери точку доставки',
+        reply_markup=generate_my_delivery_points_buttons(delivery_points))
+
+
+@router.callback_query(F.data.startswith('delivery_point_id'))
+async def set_delivery_point(
+        callback_query: CallbackQuery,
+        state: FSMContext) -> SendMessage:
+    """Запоминает выбранную точку доставки клиента."""
+    delivery_point_id = int(callback_query.data.split('_')[-1])
+    await set_my_delivery_point(delivery_point_id)
+    customer = await get_customer(callback_query.from_user.id)
+    phone = customer.get('phone')
+    if phone:
+        return await callback_query.message.edit_text(
+            text='Номер телефона для связи',
+            reply_markup=generate_phone_buttons(phone))
+    await callback_query.message.answer('Введите номер телефона:')
     await state.set_state(UserForm.phone)

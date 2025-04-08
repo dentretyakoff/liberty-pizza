@@ -25,3 +25,23 @@ async def update_customer(telegram_id: int, data: dict):
     customer = await async_session(
         f'customers/{telegram_id}/', 'PATCH', data=data)
     return customer
+
+
+async def get_cart(telegram_id: int):
+    """Получает корзину клиента."""
+    cart = await async_session(f'customers/cart/{telegram_id}/', 'GET')
+    return cart
+
+
+async def create_cart(telegram_id: int):
+    """Создает корзину клиента."""
+    data = {'telegram_id': telegram_id}
+    cart = await async_session('customers/cart/', 'POST', data=data)
+    return cart
+
+
+async def update_cart(telegram_id: int, data: dict):
+    """Обновляет поля корзины клиента."""
+    cart = await async_session(
+        f'customers/cart/{telegram_id}/', 'PATCH', data=data)
+    return cart

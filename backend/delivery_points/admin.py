@@ -26,13 +26,16 @@ class DeliveryPointAdmin(TimeStampedAdmin):
         'customer',
         'street',
         'house_number',
-        'entrance_number'
+        'entrance_number',
+        'actual'
     )
     list_display_links = ('id', 'customer')
-    search_fields = ('id', 'customer__nickname', 'street')
+    search_fields = ('id', 'customer__phone', 'street__name')
     readonly_fields = (
         'customer',
         'street',
         'house_number',
-        'entrance_number'
+        'entrance_number',
+        'actual'
     )
+    list_filter = ('street__area__name',)

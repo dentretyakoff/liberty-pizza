@@ -41,12 +41,14 @@ class DeliveryPointCreateSerializer(serializers.ModelSerializer):
         except Customer.DoesNotExist:
             raise serializers.ValidationError(
                 'Пользователь с таким Telegram ID не найден')
+        customer.delivery_points.update(actual=False)
 
-        delivery_point, _ = DeliveryPoint.objects.get_or_create(
+        delivery_point, _ = DeliveryPoint.objects.update_or_create(
             customer=customer,
             street=validated_data.get('street'),
             house_number=validated_data.get('house_number'),
-            entrance_number=validated_data.get('entrance_number'))
+            entrance_number=validated_data.get('entrance_number'),
+            defaults={'actual': True})
         return delivery_point
 
 
@@ -67,5 +69,6 @@ class DeliveryPointSerializer(serializers.ModelSerializer):
             'customer',
             'street',
             'house_number',
-            'entrance_number'
+            'entrance_number',
+            'actual'
         )

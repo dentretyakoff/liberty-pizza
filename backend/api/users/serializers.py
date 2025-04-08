@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from users.models import Customer
+from users.models import Customer, Cart
 
 
 class CustomerCreateSerializer(serializers.ModelSerializer):
@@ -19,3 +19,53 @@ class CustomerRetrieveSerializer(serializers.ModelSerializer):
     class Meta:
         model = Customer
         fields = ('id', 'telegram_id', 'nickname', 'phone')
+
+
+class CartCreateSerializer(serializers.ModelSerializer):
+    telegram_id = serializers.CharField(write_only=True)
+
+    class Meta:
+        model = Cart
+        fields = ('telegram_id',)
+
+    def validate(self, data):
+        telegram_id = data.pop('telegram_id', None)
+        try:
+            customer = Customer.objects.get(telegram_id=telegram_id)
+        except Customer.DoesNotExist:
+            raise serializers.ValidationError(
+                'Пользователь с таким Telegram ID не найден.')
+        data['customer'] = customer
+        return data
+
+    def create(self, validated_data):
+        cart, _ = Cart.objects.get_or_create(
+            customer=validated_data.get('customer')
+        )
+        return cart
+
+
+class CartUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Cart
+        fields = ('payment_method', 'comment')
+
+
+class CartRetrieveSerializer(serializers.ModelSerializer):
+    customer = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field='telegram_id'
+    )
+
+    class Meta:
+        model = Cart
+        fields = (
+            'id',
+            'customer',
+            'payment_method',
+            'payment_method_display',
+            'comment'
+        )
+
+    def get_payment_method_display(self, obj):
+        return obj.get_payment_method_display()

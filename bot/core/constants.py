@@ -23,5 +23,19 @@ class OrderStatus:
     CANCELLED = 'cancelled'
 
 
+class InputValidationConstants:
+    MESSAGE_IS_NOT_TEXT = (
+        'Вы отправили файл вместо текста, '
+        'пожалуйста введите текстовое сообщение.'
+    )
+    INCORRECT_HOUSE_NUMBER = (
+        'Некорректный номер дома, пожалуйста, попробуйте еще раз.'
+    )
+    INCORRECT_PHONE_NUMBER = (
+        'Некорректный номер телефона.\n'
+        'Пожалуйста введите в формате +71234567890 или 89123456789.'
+    )
+
+
 HOUSE_NUMBER_PATTERN = r'^[\d]+[\/\-\s]?[А-Яа-яA-Za-z0-9]*$'
 PHONE_PATTERN = r'^(?:\+7|8)\d{10}$'

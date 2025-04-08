@@ -3,7 +3,7 @@ from aiogram.filters import CommandStart
 from aiogram.types import Message, CallbackQuery
 from aiogram.methods import SendMessage
 
-from api.users import create_customer
+from api.users import create_customer, create_cart
 from core.constants import MessagesConstants
 from handlers.keyboards import main_menu_keyboard, back_to_main_keyboard
 
@@ -16,6 +16,7 @@ async def start_handler(message: Message) -> SendMessage:
     """Приветствуем пользователя."""
     hello_message = MessagesConstants.HELLO
     await create_customer(message.from_user.id, message.from_user.username)
+    await create_cart(message.from_user.id)
     await message.answer(
         text=hello_message, reply_markup=main_menu_keyboard)
 
