@@ -3,9 +3,9 @@ from aiogram.types import InlineKeyboardButton
 from handlers.keyboards.base import get_form_keyboard
 
 
-categoies_button = InlineKeyboardButton(
+categories_button = InlineKeyboardButton(
     text='Товары',
-    callback_data='categoies'
+    callback_data='categories'
 )
 orders_button = InlineKeyboardButton(
     text='Заказы',
@@ -18,7 +18,7 @@ cart_button = InlineKeyboardButton(
 
 
 main_menu_keyboard = get_form_keyboard(
-    categoies_button,
+    categories_button,
     orders_button,
     cart_button
 )

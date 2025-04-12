@@ -1,4 +1,5 @@
 /backend/test_data/
+backend/media_files/
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

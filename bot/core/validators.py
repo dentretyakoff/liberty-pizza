@@ -5,7 +5,9 @@ from aiogram.types import Message
 from core.constants import (
     HOUSE_NUMBER_PATTERN,
     PHONE_PATTERN,
-    InputValidationConstants
+    InputValidationConstants,
+    MIN_QUANTITY,
+    MAX_QUANTITY
 )
 from core.exceptions.validations import ValidationError
 
@@ -29,3 +31,10 @@ def validate_message_is_text(message: Message) -> str:
     if message.content_type != 'text':
         raise ValidationError(InputValidationConstants.MESSAGE_IS_NOT_TEXT)
     return message.text
+
+
+def validate_quantity_is_number(quantity: str) -> str:
+    """Проверяет является ли количество положительным числом."""
+    if not quantity.isdigit() or not (MIN_QUANTITY <= int(quantity) <= MAX_QUANTITY):  # noqa
+        raise ValidationError(InputValidationConstants.INCORRECT_QUANTITY)
+    return quantity

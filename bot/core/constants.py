@@ -23,6 +23,10 @@ class OrderStatus:
     CANCELLED = 'cancelled'
 
 
+MIN_QUANTITY = 1
+MAX_QUANTITY = 32767
+
+
 class InputValidationConstants:
     MESSAGE_IS_NOT_TEXT = (
         'Вы отправили файл вместо текста, '
@@ -34,6 +38,10 @@ class InputValidationConstants:
     INCORRECT_PHONE_NUMBER = (
         'Некорректный номер телефона.\n'
         'Пожалуйста введите в формате +71234567890 или 89123456789.'
+    )
+    INCORRECT_QUANTITY = (
+        'Некорректное количество.\n'
+        f'Пожалуйста введите число от 1 до {MAX_QUANTITY}'
     )
 
 

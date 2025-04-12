@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.conf import settings
 
 
 class TimeStampedAdmin(admin.ModelAdmin):
@@ -12,3 +13,8 @@ class TimeStampedAdmin(admin.ModelAdmin):
     def get_list_display(self, request):
         list_display = getattr(self, 'list_display', ())
         return list_display + self.base_readonly_fields
+
+
+project_name = settings.PROJECT_NAME
+admin.site.site_header = f'Панель управления {project_name}'
+admin.site.site_title = f'Панель управления {project_name}'

@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from users.models import Customer, Cart
+from users.models import Customer, Cart, CartItem
 
 
 class CustomerCreateSerializer(serializers.ModelSerializer):
@@ -51,11 +51,27 @@ class CartUpdateSerializer(serializers.ModelSerializer):
         fields = ('payment_method', 'comment')
 
 
+class CartItemRetrieveSerializer(serializers.ModelSerializer):
+    product_name = serializers.CharField(
+        source='product.name', read_only=True)
+
+    class Meta:
+        model = CartItem
+        fields = (
+            'id',
+            'cart',
+            'product',
+            'product_name',
+            'quantity',
+            'price')
+
+
 class CartRetrieveSerializer(serializers.ModelSerializer):
     customer = serializers.SlugRelatedField(
         read_only=True,
         slug_field='telegram_id'
     )
+    items = CartItemRetrieveSerializer(many=True, read_only=True)
 
     class Meta:
         model = Cart
@@ -64,8 +80,33 @@ class CartRetrieveSerializer(serializers.ModelSerializer):
             'customer',
             'payment_method',
             'payment_method_display',
-            'comment'
+            'comment',
+            'total_price',
+            'items'
         )
 
     def get_payment_method_display(self, obj):
         return obj.get_payment_method_display()
+
+
+class CartItemCreateSerializer(serializers.ModelSerializer):
+    telegram_id = serializers.CharField(write_only=True)
+
+    class Meta:
+        model = CartItem
+        fields = ('id', 'telegram_id', 'product', 'quantity')
+
+    def validate(self, data):
+        telegram_id = data.pop('telegram_id', None)
+        try:
+            customer = Customer.objects.get(telegram_id=telegram_id)
+        except Customer.DoesNotExist:
+            raise serializers.ValidationError(
+                'Пользователь с таким Telegram ID не найден.')
+        data['cart'] = customer.cart
+        return data
+
+    def create(self, validated_data):
+        product = validated_data['product']
+        validated_data['price'] = product.price
+        return super().create(validated_data)

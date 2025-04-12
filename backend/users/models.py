@@ -1,3 +1,5 @@
+from decimal import Decimal, ROUND_DOWN
+
 from django.db import models
 from django.core.validators import RegexValidator
 
@@ -66,22 +68,37 @@ class Cart(BaseModel):
     def payment_method_display(self):
         return dict(PaymentMethod.choices).get(self.payment_method)
 
+    @property
+    def total_price(self) -> Decimal:
+        total = sum(
+            (item.price * item.quantity for item in self.items.all()),
+            start=Decimal('0')
+        )
+        return str(total.quantize(Decimal('0.01'), rounding=ROUND_DOWN))
+
 
 class CartItem(BaseModel):
     cart = models.ForeignKey(
         Cart,
-        verbose_name='Козина клиента',
+        verbose_name='Клиент',
         related_name='items',
         on_delete=models.CASCADE
     )
     product = models.ForeignKey(
         Product,
         verbose_name='Товар',
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        related_name='cartitems'
     )
     quantity = models.PositiveSmallIntegerField(
         'Количество',
         default=1
+    )
+    price = models.DecimalField(
+        'Цена',
+        help_text='Фиксируется в момент добалвения в корзину',
+        max_digits=10,
+        decimal_places=2
     )
 
     class Meta:
@@ -89,4 +106,4 @@ class CartItem(BaseModel):
         verbose_name_plural = 'Товары корзин'
 
     def __str__(self):
-        return self.product
+        return f'{self.product}'

@@ -1,3 +1,7 @@
+import base64
+
+from aiogram.types import BufferedInputFile
+
 from api.users import get_customer, get_cart
 from api.delivery_points import get_my_delivery_point
 
@@ -9,12 +13,14 @@ async def get_order_detail(telegram_id: int) -> str:
     customer = await get_customer(telegram_id)
     delivery_point = await get_my_delivery_point(telegram_id)
     cart = await get_cart(telegram_id)
-    order_detail = (
-        'Детали заказа:\n'
-        '1. Пицца Маргарита - 1шт. 500р.\n'
-        '2. Пицца Четыре сезона - 1шт. 600р.\n'
-        '3. Доставка - 220р.\n\n'
-        'Итого: 1320р.\n'
+    order_detail = 'Детали заказа:\n'
+    for i, product in enumerate(cart.get('items'), 1):
+        order_detail += (
+            f'{i}. {product.get("product_name")} '
+            f'{product.get("quantity")} шт. - '
+            f'{product.get("price")} руб.\n')
+    order_detail += (
+        f'\nИтого: {cart.get("total_price")} руб.\n'
         f'Способ оплаты: {cart.get("payment_method_display")}\n\n'
         f'Комментарий: {cart.get("comment")}\n\n'
         f'Адрес: {delivery_point.get("street")}, '
@@ -23,3 +29,32 @@ async def get_order_detail(telegram_id: int) -> str:
         f'Телефон: {customer.get("phone")}'
     )
     return order_detail
+
+
+async def get_product_detail(product: dict) -> str:
+    """Детали товара для сообщения."""
+    product_detail = (
+        f'{product.get("name")}\n\n'
+        f'{product.get("description")}\n\n'
+        f'Цена: {product.get("price")}р.'
+    )
+    return product_detail
+
+
+async def get_cart_detail(cart: dict) -> str:
+    """Детали корзины."""
+    cart_detail = 'Корзина:\n\n'
+    for i, product in enumerate(cart.get('items'), 1):
+        cart_detail += (f'{i}. {product.get("product_name")} '
+                        f'{product.get("quantity")} шт. - '
+                        f'{product.get("price")} руб.\n')
+    cart_detail += f'\nИтого: {cart.get("total_price")} руб.'
+    return cart_detail
+
+
+async def make_image_from_base64(
+        image_base64: dict, filename: str) -> BufferedInputFile | None:
+    """Если у сообщения есть изображение в формате base64 делает
+    из него BufferedInputFile для отправки в телеграмм."""
+    return BufferedInputFile(
+        file=base64.b64decode(image_base64), filename=f'{filename}.png')

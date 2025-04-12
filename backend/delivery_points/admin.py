@@ -39,3 +39,6 @@ class DeliveryPointAdmin(TimeStampedAdmin):
         'actual'
     )
     list_filter = ('street__area__name',)
+
+    def has_add_permission(self, request):
+        return False
