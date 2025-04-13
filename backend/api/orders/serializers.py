@@ -44,7 +44,7 @@ class OrderCreateSerializer(serializers.ModelSerializer):
         cart = customer.cart
         # TODO заполнять status и payment_url если оплата robokassa
         order = Order.objects.create(
-            payment_method=validated_data.get('payment_method'),
+            payment_method=cart.payment_method,
             customer=customer,
             comment=cart.comment,
         )

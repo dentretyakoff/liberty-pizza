@@ -3,6 +3,16 @@ from aiogram.types import InlineKeyboardButton
 from handlers.keyboards.base import get_form_keyboard, back_to_main_button
 
 
+def generate_cart_buttons(cart: dict):
+    """Генерирует кнопки в корзине."""
+    buttons = []
+    items = cart.get('items')
+    if len(items) > 0:
+        buttons.append(making_order_button)
+    buttons.append(back_to_main_button)
+    return get_form_keyboard(*buttons)
+
+
 making_order_button = InlineKeyboardButton(
     text='✍️ К оформлению заказа',
     callback_data='my_delivery_points'
@@ -10,9 +20,4 @@ making_order_button = InlineKeyboardButton(
 areas_button = InlineKeyboardButton(
     text='🆕 Новая',
     callback_data='areas'
-)
-
-cart_menu = get_form_keyboard(
-    making_order_button,
-    back_to_main_button
 )

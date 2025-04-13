@@ -76,7 +76,9 @@ async def add_cartitem_to_cart(
     product_id = int(callback_query.data.split('_')[-1])
     await state.update_data(product=product_id)
     await callback_query.message.delete()
-    await callback_query.message.answer('Введите количество товара:')
+    request_msg = await callback_query.message.answer(
+        'Введите количество товара:')
+    await state.update_data(request_msg_id=request_msg.message_id)
     await state.set_state(ProductForm.quantity)
 
 
@@ -89,6 +91,14 @@ async def input_quantity(
     await state.update_data(quantity=quantity)
     data = await state.get_data()
     data['telegram_id'] = message.from_user.id
+    request_msg_id = data.pop('request_msg_id')
+    if request_msg_id:
+        try:
+            await message.bot.delete_message(
+                chat_id=message.chat.id,
+                message_id=request_msg_id)
+        except Exception as e:
+            print(f'Не удалось удалить сообщение: {e}')
     await add_cartitem(data)
     await state.clear()
     await answer_with_detail_product(

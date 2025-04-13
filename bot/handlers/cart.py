@@ -3,7 +3,7 @@ from aiogram.types import CallbackQuery
 from aiogram.methods import SendMessage
 
 from api.users import get_cart
-from handlers.keyboards import cart_menu
+from handlers.keyboards import generate_cart_buttons
 from .utils import get_cart_detail
 
 router = Router()
@@ -16,4 +16,4 @@ async def cart(callback_query: CallbackQuery) -> SendMessage:
     cart_detail = await get_cart_detail(cart)
     await callback_query.message.delete()
     await callback_query.message.answer(
-        text=cart_detail, reply_markup=cart_menu)
+        text=cart_detail, reply_markup=generate_cart_buttons(cart))
