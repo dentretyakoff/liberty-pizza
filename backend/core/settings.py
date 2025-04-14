@@ -129,6 +129,7 @@ MERCHANT_LOGIN = os.getenv('MERCHANT_LOGIN')
 MERCHANT_PASSWORD_1 = os.getenv('MERCHANT_PASSWORD_1')
 MERCHANT_PASSWORD_2 = os.getenv('MERCHANT_PASSWORD_2')
 IS_TEST = int(os.getenv('IS_TEST', 1))
+ROBOKASSA_URL = 'https://auth.robokassa.ru/Merchant/Index.aspx'
 
 # Название проекта для админки
 PROJECT_NAME = os.getenv('PROJECT_NAME')

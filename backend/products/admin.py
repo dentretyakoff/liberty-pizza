@@ -12,6 +12,7 @@ class ProductAdmin(TimeStampedAdmin):
         'description',
         'price',
         'category',
+        'tax',
         'image'
     )
     list_display_links = ('id', 'name')

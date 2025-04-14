@@ -82,6 +82,7 @@ class CartRetrieveSerializer(serializers.ModelSerializer):
             'payment_method_display',
             'comment',
             'total_price',
+            'delivery_price',
             'items'
         )
 

@@ -43,12 +43,6 @@ class Order(BaseModel):
         null=True,
         blank=True
     )
-    payment_url = models.URLField(
-        'Ссылка на оплату',
-        null=True,
-        blank=True,
-        max_length=2000
-    )
 
     class Meta:
         verbose_name = 'Заказ'
@@ -68,12 +62,20 @@ class Order(BaseModel):
         return dict(PaymentMethod.choices).get(self.payment_method)
 
     @property
-    def total_price(self) -> Decimal:
+    def total_price(self) -> str:
         total = sum(
             (item.price * item.quantity for item in self.items.all()),
             start=Decimal('0')
         )
+        total += Decimal(self.delivery_price)
         return str(total.quantize(Decimal('0.01'), rounding=ROUND_DOWN))
+
+    @property
+    def delivery_price(self) -> str:
+        delivery_point = self.customer.delivery_points.filter(
+            actual=True).first()
+        cost = delivery_point.street.cost
+        return str(cost.quantize(Decimal('0.01'), rounding=ROUND_DOWN))
 
 
 class OrderItem(BaseModel):

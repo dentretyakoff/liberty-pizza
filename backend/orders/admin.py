@@ -22,16 +22,17 @@ class OrderAdmin(TimeStampedAdmin):
         'payment_method',
         'comment',
         'total_price_display',
-        'expiration_date'
+        'delivery_price_display',
+        'expiration_date',
     )
     readonly_fields = (
         'customer',
         'payment_method',
         'total_price_display',
         'comment',
-        'payment_url',
         'expiration_date',
         'status',
+        'delivery_price_display'
     )
     list_display_links = ('id', 'customer')
     search_fields = (
@@ -51,3 +52,7 @@ class OrderAdmin(TimeStampedAdmin):
     def total_price_display(self, obj):
         return f'{obj.total_price} ₽'
     total_price_display.short_description = 'Общая сумма'
+
+    def delivery_price_display(self, obj):
+        return f'{obj.delivery_price} ₽'
+    delivery_price_display.short_description = 'Доставка'

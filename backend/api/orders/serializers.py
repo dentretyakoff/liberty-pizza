@@ -1,6 +1,8 @@
+from django.urls import reverse
 from rest_framework import serializers
 
 from orders.models import Order, OrderItem
+from base.enum import PaymentMethod
 from users.models import Customer
 
 
@@ -66,6 +68,7 @@ class OrderCreateSerializer(serializers.ModelSerializer):
 
 class OrderRetrieveSerializer(serializers.ModelSerializer):
     items = OrderItemRetrieveSerializer(many=True, read_only=True)
+    payment_url = serializers.SerializerMethodField()
 
     class Meta:
         model = Order
@@ -77,6 +80,7 @@ class OrderRetrieveSerializer(serializers.ModelSerializer):
             'payment_method_display',
             'comment',
             'total_price',
+            'delivery_price',
             'expiration_date',
             'payment_url',
             'items'
@@ -84,3 +88,8 @@ class OrderRetrieveSerializer(serializers.ModelSerializer):
 
     def get_payment_method_display(self, obj):
         return obj.get_payment_method_display()
+
+    def get_payment_url(self, obj):
+        if obj.payment_method == PaymentMethod.ROBOKASSA:
+            return reverse('orders:robokassa_redirect', args=[obj.id])
+        return None

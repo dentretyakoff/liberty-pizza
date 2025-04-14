@@ -81,3 +81,7 @@ class DeliveryPoint(BaseModel):
 
     def __str__(self):
         return f'{self.id}'
+
+    @property
+    def street_display(self):
+        return f'{self.street.name}'

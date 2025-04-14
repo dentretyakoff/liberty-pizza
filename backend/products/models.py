@@ -1,6 +1,7 @@
 from django.db import models
 
 from base.models import BaseModel
+from .enum import Tax
 
 
 class Product(BaseModel):
@@ -32,6 +33,12 @@ class Product(BaseModel):
         upload_to='images/',
         blank=True,
         null=True
+    )
+    tax = models.CharField(
+        'Налоговая ставка',
+        choices=Tax,
+        default=Tax.NONE,
+        max_length=10
     )
 
     class Meta:

@@ -15,7 +15,10 @@ from handlers.keyboards.base import (
 )
 from handlers.keyboards.cart import areas_button, generate_cart_buttons
 from handlers.keyboards.common import main_menu_keyboard
-from handlers.keyboards.orders import create_order_keyboard
+from handlers.keyboards.orders import (
+    create_order_keyboard,
+    generate_payment_link_buttons
+)
 from handlers.keyboards.products import (
     generate_categories_buttons,
     generate_products_buttons,

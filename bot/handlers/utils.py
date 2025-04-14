@@ -1,9 +1,23 @@
 import base64
+from decimal import Decimal
 
 from aiogram.types import BufferedInputFile
 
 from api.users import get_customer, get_cart
 from api.delivery_points import get_my_delivery_point
+
+
+async def product_list(items: list) -> tuple[str, int]:
+    product_list = ''
+    count = 0
+    for i, product in enumerate(items, 1):
+        product_list += (
+            f'{i}. {product.get("product_name")} '
+            f'{product.get("quantity")} шт. - '
+            f'{product.get("price")} руб.\n')
+        count += 1
+
+    return product_list, count
 
 
 async def get_order_detail(telegram_id: int) -> str:
@@ -13,14 +27,14 @@ async def get_order_detail(telegram_id: int) -> str:
     customer = await get_customer(telegram_id)
     delivery_point = await get_my_delivery_point(telegram_id)
     cart = await get_cart(telegram_id)
+    delivery_price = cart.get('delivery_price')
     order_detail = 'Детали заказа:\n'
-    for i, product in enumerate(cart.get('items'), 1):
-        order_detail += (
-            f'{i}. {product.get("product_name")} '
-            f'{product.get("quantity")} шт. - '
-            f'{product.get("price")} руб.\n')
+    products, count = await product_list(cart.get('items'))
+    total = Decimal(cart.get("total_price")) + Decimal(delivery_price)
     order_detail += (
-        f'\nИтого: {cart.get("total_price")} руб.\n'
+        f'{products}'
+        f'{count + 1}. Доставка - {delivery_price} руб.\n'
+        f'\nИтого: {total} руб.\n'
         f'Способ оплаты: {cart.get("payment_method_display")}\n\n'
         f'Комментарий: {cart.get("comment")}\n\n'
         f'Адрес: {delivery_point.get("street")}, '
@@ -44,10 +58,8 @@ async def get_product_detail(product: dict) -> str:
 async def get_cart_detail(cart: dict) -> str:
     """Детали корзины."""
     cart_detail = 'Корзина:\n\n'
-    for i, product in enumerate(cart.get('items'), 1):
-        cart_detail += (f'{i}. {product.get("product_name")} '
-                        f'{product.get("quantity")} шт. - '
-                        f'{product.get("price")} руб.\n')
+    products, _ = await product_list(cart.get('items'))
+    cart_detail += products
     cart_detail += f'\nИтого: {cart.get("total_price")} руб.'
     return cart_detail
 

@@ -1,9 +1,11 @@
-import decimal
 import hashlib
 import json
+from decimal import Decimal, ROUND_DOWN
 from datetime import datetime
 from urllib import parse
 from urllib.parse import urlparse
+
+from django.conf import settings
 
 
 def calculate_signature(*args) -> str:
@@ -27,7 +29,7 @@ def parse_response(request: str) -> dict:
 
 def check_signature_result(
     order_number: int,  # invoice number
-    received_sum: decimal,  # cost of goods, RU
+    received_sum: Decimal,  # cost of goods, RU
     received_signature: hex,  # SignatureValue
     password: str  # Merchant password
 ) -> bool:
@@ -42,7 +44,7 @@ def check_signature_result(
 def generate_payment_link(
     merchant_login: str,  # Merchant login
     merchant_password_1: str,  # Merchant password
-    cost: decimal,  # Cost of goods, RU
+    cost: Decimal,  # Cost of goods, RU
     number: int,  # Invoice number
     # description: str,  # Description of the purchase
     expiration_date: datetime,
@@ -108,3 +110,50 @@ def check_success_payment(merchant_password_1: str, request: str) -> str:
     if check_signature_result(number, cost, signature, merchant_password_1):  # noqa
         return "Thank you for using our service"
     return "bad sign"
+
+
+def generate_payment_params(order):
+    """Генерирует параметры для формы с POST запросом."""
+    receipt = build_receipt(order)
+    params = {
+        'MerchantLogin': settings.MERCHANT_LOGIN,
+        'OutSum': order.total_price,
+        'InvId': str(order.id),
+        'IsTest': settings.IS_TEST,
+        'ExpirationDate': order.expiration_date,
+        'Receipt': receipt
+    }
+    params['SignatureValue'] = calculate_signature(
+        settings.MERCHANT_LOGIN,
+        order.total_price,
+        order.id,
+        receipt,
+        settings.MERCHANT_PASSWORD_1
+    )
+    return params
+
+
+def build_receipt(order):
+    items = []
+    for item in order.items.all():
+        items.append({
+            'name': item.product.name,
+            'quantity': item.quantity,
+            'sum': to_robokassa_sum(item.price * item.quantity),
+            'tax': item.product.tax
+        })
+    delivery_point = order.customer.delivery_points.filter(actual=True).first()
+    delivery = {
+        'name': f'Доставка {delivery_point.street_display}',
+        'quantity': 1,
+        'sum': to_robokassa_sum(order.delivery_price),
+        'tax': 'none'}
+    items.append(delivery)
+    receipt = {'items': items}
+    receipt_json = json.dumps(receipt, ensure_ascii=False)
+    receipt_encoded = parse.quote(receipt_json)
+    return receipt_encoded
+
+
+def to_robokassa_sum(value):
+    return float(Decimal(value).quantize(Decimal('0.01'), rounding=ROUND_DOWN))

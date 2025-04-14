@@ -11,7 +11,8 @@ API_VERSION = settings.API_VERSION
 urlpatterns = [
     path('admin/', admin.site.urls),
     path(f'api/{API_VERSION}/', include('api.urls')),
-    path(f'api/{API_VERSION}/token-auth/', views.obtain_auth_token)
+    path(f'api/{API_VERSION}/token-auth/', views.obtain_auth_token),
+    path('orders/', include('orders.urls'))
 ]
 
 if settings.DEBUG:

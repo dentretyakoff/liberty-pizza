@@ -8,6 +8,7 @@ load_dotenv(find_dotenv())
 
 TOKEN = os.getenv('TELEGRAM_TOKEN')
 BACKEND_URL = os.getenv('BACKEND_URL')
+FRONTEND_URL = os.getenv('FRONTEND_URL')
 DEBUG = os.getenv('DEBUG', 'false').lower() in ('true',)
 CELERY_BROKER = os.getenv('CELERY_BROKER')
 API_TOKEN = os.getenv('API_TOKEN')
