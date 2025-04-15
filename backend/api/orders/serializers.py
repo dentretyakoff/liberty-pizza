@@ -1,4 +1,5 @@
 from django.urls import reverse
+from django.core import signing
 from rest_framework import serializers
 
 from orders.models import Order, OrderItem
@@ -91,5 +92,6 @@ class OrderRetrieveSerializer(serializers.ModelSerializer):
 
     def get_payment_url(self, obj):
         if obj.payment_method == PaymentMethod.ROBOKASSA:
-            return reverse('orders:robokassa_redirect', args=[obj.id])
+            token = signing.dumps(obj.id)
+            return reverse('orders:robokassa_redirect', args=[token])
         return None

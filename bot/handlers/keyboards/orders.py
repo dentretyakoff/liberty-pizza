@@ -10,7 +10,7 @@ def generate_payment_link_buttons(payment_url: str):
     if payment_url:
         url = FRONTEND_URL + payment_url
         buttons.append(
-            InlineKeyboardButton(text='💳 Оплатить заказ', url=url))
+            InlineKeyboardButton(text='💳 Оплатить', url=url))
     buttons.append(back_to_main_button)
     return get_form_keyboard(*buttons)
 
@@ -19,7 +19,6 @@ create_order_button = InlineKeyboardButton(
     text='Создать',
     callback_data='create_order'
 )
-
 create_order_keyboard = get_form_keyboard(
     create_order_button,
     back_to_main_button

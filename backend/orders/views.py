@@ -1,6 +1,7 @@
 from http import HTTPStatus
 
 from django.core.exceptions import PermissionDenied
+from django.core import signing
 from django.conf import settings
 from django.utils import timezone
 from django.shortcuts import get_object_or_404, render
@@ -10,7 +11,12 @@ from payment.robokassa import generate_payment_params
 from .models import Order
 
 
-def robokassa_redirect(request, order_id):
+def robokassa_redirect(request, token):
+    """Формирует форму для оплаты через робокассу."""
+    try:
+        order_id = signing.loads(token)
+    except signing.BadSignature:
+        raise PermissionDenied('Невалидный токен')
     order = get_object_or_404(Order, id=order_id)
 
     if order.payment_method != PaymentMethod.ROBOKASSA:

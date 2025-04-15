@@ -6,5 +6,5 @@ app_name = 'orders'
 
 
 urlpatterns = [
-    path('pay/<int:order_id>/', robokassa_redirect, name='robokassa_redirect'),
+    path('pay/<str:token>/', robokassa_redirect, name='robokassa_redirect'),
 ]
