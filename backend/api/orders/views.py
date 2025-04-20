@@ -16,6 +16,7 @@ from .serializers import (
 
 class OrderViewSet(mixins.CreateModelMixin,
                    mixins.RetrieveModelMixin,
+                   mixins.ListModelMixin,
                    viewsets.GenericViewSet):
     queryset = Order.objects.all()
     serializer_class = OrderCreateSerializer
@@ -24,6 +25,13 @@ class OrderViewSet(mixins.CreateModelMixin,
         if self.action == 'create':
             return OrderCreateSerializer
         return OrderRetrieveSerializer
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        telegram_id = self.request.query_params.get('telegram_id')
+        if telegram_id:
+            queryset = queryset.filter(customer__telegram_id=telegram_id)
+        return queryset
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)

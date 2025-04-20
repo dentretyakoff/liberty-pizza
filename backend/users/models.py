@@ -105,7 +105,7 @@ class CartItem(BaseModel):
     )
     price = models.DecimalField(
         'Цена',
-        help_text='Фиксируется в момент добалвения в корзину',
+        help_text='Фиксируется в момент добавления в корзину',
         max_digits=10,
         decimal_places=2
     )

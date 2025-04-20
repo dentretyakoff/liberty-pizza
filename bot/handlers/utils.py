@@ -20,8 +20,8 @@ async def product_list(items: list) -> tuple[str, int]:
     return product_list, count
 
 
-async def get_order_detail(telegram_id: int) -> str:
-    """Детали заказа."""
+async def get_pre_order_detail(telegram_id: int) -> str:
+    """Детали заказа перед оформлением."""
     # TODO получение товаров, адреса доставки и номера
     # телефона одной ручкой order_detail
     customer = await get_customer(telegram_id)
@@ -37,6 +37,26 @@ async def get_order_detail(telegram_id: int) -> str:
         f'\nИтого: {total} руб.\n'
         f'Способ оплаты: {cart.get("payment_method_display")}\n\n'
         f'Комментарий: {cart.get("comment")}\n\n'
+        f'Адрес: {delivery_point.get("street")}, '
+        f'{delivery_point.get("house_number")}, '
+        f'подъезд {delivery_point.get("entrance_number")}\n'
+        f'Телефон: {customer.get("phone")}'
+    )
+    return order_detail
+
+
+async def get_order_detail(order: dict) -> str:
+    """Детали заказа."""
+    order_detail = 'Детали заказа:\n'
+    products, count = await product_list(order.get('items'))
+    delivery_point = order.get('delivery_point')
+    customer = order.get('customer')
+    order_detail += (
+        f'{products}'
+        f'{count + 1}. Доставка - {order.get("delivery_price")} руб.\n'
+        f'\nИтого: {order.get("total_price")} руб.\n'
+        f'Способ оплаты: {order.get("payment_method_display")}\n\n'
+        f'Комментарий: {order.get("comment")}\n\n'
         f'Адрес: {delivery_point.get("street")}, '
         f'{delivery_point.get("house_number")}, '
         f'подъезд {delivery_point.get("entrance_number")}\n'

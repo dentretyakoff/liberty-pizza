@@ -2,6 +2,8 @@ from django.urls import reverse
 from django.core import signing
 from rest_framework import serializers
 
+from api.delivery_points.serializers import DeliveryPointSerializer
+from api.users.serializers import CustomerRetrieveSerializer
 from orders.models import Order, OrderItem
 from base.enum import PaymentMethod
 from users.models import Customer
@@ -45,11 +47,12 @@ class OrderCreateSerializer(serializers.ModelSerializer):
         telegram_id = validated_data.pop('telegram_id')
         customer = Customer.objects.get(telegram_id=telegram_id)
         cart = customer.cart
-        # TODO заполнять status и payment_url если оплата robokassa
+        delivery_point = customer.delivery_points.filter(actual=True).first()
         order = Order.objects.create(
             payment_method=cart.payment_method,
             customer=customer,
             comment=cart.comment,
+            delivery_point=delivery_point
         )
         cart_items = cart.items.all()
         order_items = [
@@ -70,6 +73,8 @@ class OrderCreateSerializer(serializers.ModelSerializer):
 class OrderRetrieveSerializer(serializers.ModelSerializer):
     items = OrderItemRetrieveSerializer(many=True, read_only=True)
     payment_url = serializers.SerializerMethodField()
+    customer = CustomerRetrieveSerializer()
+    delivery_point = DeliveryPointSerializer()
 
     class Meta:
         model = Order
@@ -84,7 +89,9 @@ class OrderRetrieveSerializer(serializers.ModelSerializer):
             'delivery_price',
             'expiration_date',
             'payment_url',
-            'items'
+            'created_at',
+            'delivery_point',
+            'items',
         )
 
     def get_payment_method_display(self, obj):

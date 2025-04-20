@@ -80,7 +80,7 @@ class DeliveryPoint(BaseModel):
         ordering = ('street__name',)
 
     def __str__(self):
-        return f'{self.id}'
+        return f'{self.street.name} {self.house_number}'
 
     @property
     def street_display(self):

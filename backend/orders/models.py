@@ -10,6 +10,7 @@ from base.models import BaseModel
 from base.enum import PaymentMethod
 from users.models import Customer
 from products.models import Product
+from delivery_points.models import DeliveryPoint
 from .enum import OrderStatus
 
 
@@ -43,10 +44,18 @@ class Order(BaseModel):
         null=True,
         blank=True
     )
+    delivery_point = models.ForeignKey(
+        DeliveryPoint,
+        verbose_name='Адрес достаки',
+        related_name='orders',
+        on_delete=models.PROTECT,
+        null=True
+    )
 
     class Meta:
         verbose_name = 'Заказ'
         verbose_name_plural = 'Заказы'
+        ordering = ('-id',)
 
     def __str__(self):
         return f'Заказ № {self.pk}'
@@ -56,6 +65,7 @@ class Order(BaseModel):
             self.expiration_date = timezone.now() + timedelta(
                 seconds=settings.ORDER_MAX_LIFE_TIME
             )
+            self.status = OrderStatus.AWAITING
         return super().save(*args, **kwargs)
 
     def payment_method_display(self):

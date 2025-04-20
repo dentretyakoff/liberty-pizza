@@ -23,6 +23,7 @@ class OrderAdmin(TimeStampedAdmin):
         'comment',
         'total_price_display',
         'delivery_price_display',
+        'delivery_point',
         'expiration_date',
     )
     readonly_fields = (
@@ -32,7 +33,8 @@ class OrderAdmin(TimeStampedAdmin):
         'comment',
         'expiration_date',
         'status',
-        'delivery_price_display'
+        'delivery_price_display',
+        'delivery_point'
     )
     list_display_links = ('id', 'customer')
     search_fields = (

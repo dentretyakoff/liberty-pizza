@@ -7,7 +7,7 @@ from api.users import update_customer, update_cart
 from handlers.keyboards import create_order_keyboard, payment_method_keyboard
 from handlers.states import UserForm, CartForm
 from core.validators import validate_phone_number, validate_message_is_text
-from handlers.utils import get_order_detail
+from handlers.utils import get_pre_order_detail
 
 router = Router()
 
@@ -70,7 +70,7 @@ async def select_payment_method(callback_query: CallbackQuery) -> SendMessage:
     await update_cart(
         telegram_id=callback_query.from_user.id,
         data={'payment_method': payment_method})
-    order_detail = await get_order_detail(callback_query.from_user.id)
+    order_detail = await get_pre_order_detail(callback_query.from_user.id)
     await callback_query.message.edit_text(
         text=order_detail,
         reply_markup=create_order_keyboard
