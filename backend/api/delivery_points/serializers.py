@@ -9,10 +9,14 @@ class StreetSerializer(serializers.ModelSerializer):
         read_only=True,
         slug_field='name'
     )
+    exists_entrance = serializers.SerializerMethodField()
 
     class Meta:
         model = Street
-        fields = ('id', 'name', 'cost', 'area')
+        fields = ('id', 'name', 'cost', 'area', 'exists_entrance')
+
+    def get_exists_entrance(self, obj):
+        return obj.area.exists_entrance
 
 
 class AreaSerializer(serializers.ModelSerializer):

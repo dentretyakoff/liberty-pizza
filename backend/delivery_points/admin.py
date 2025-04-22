@@ -14,7 +14,7 @@ class StreetAdmin(TimeStampedAdmin):
 
 @admin.register(Area)
 class AreaAdmin(TimeStampedAdmin):
-    list_display = ('id', 'name')
+    list_display = ('id', 'name', 'exists_entrance')
     list_display_links = ('id', 'name')
     search_fields = ('id', 'name')
 

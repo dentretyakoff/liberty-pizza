@@ -39,6 +39,10 @@ class Area(BaseModel):
         help_text='Используется для группировки улиц в кнопках',
         max_length=200
     )
+    exists_entrance = models.BooleanField(
+        'Наличие подъездов',
+        default=True
+    )
 
     class Meta:
         verbose_name = 'Зона доставки'
@@ -68,6 +72,8 @@ class DeliveryPoint(BaseModel):
     )
     entrance_number = models.PositiveSmallIntegerField(
         'Номер подъезда',
+        null=True,
+        blank=True
     )
     actual = models.BooleanField(
         'Текущий',

@@ -13,6 +13,7 @@ from .serializers import (
 
 
 class StreetViewSet(mixins.ListModelMixin,
+                    mixins.RetrieveModelMixin,
                     viewsets.GenericViewSet):
     queryset = Street.objects.all()
     serializer_class = StreetSerializer

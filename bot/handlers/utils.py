@@ -35,6 +35,7 @@ async def get_pre_order_detail(telegram_id: int) -> str:
     order_detail = 'Детали заказа:\n'
     products, count = await product_list(cart.get('items'))
     total = Decimal(cart.get("total_price")) + Decimal(delivery_price)
+    entrance_number = delivery_point.get("entrance_number")
     order_detail += (
         f'{products}'
         f'{count + 1}. Доставка - {delivery_price} руб.\n'
@@ -42,10 +43,11 @@ async def get_pre_order_detail(telegram_id: int) -> str:
         f'Способ оплаты: {cart.get("payment_method_display")}\n\n'
         f'Комментарий: {cart.get("comment")}\n\n'
         f'Адрес: {delivery_point.get("street")}, '
-        f'{delivery_point.get("house_number")}, '
-        f'подъезд {delivery_point.get("entrance_number")}\n'
-        f'Телефон: {customer.get("phone")}'
+        f'{delivery_point.get("house_number")}'
     )
+    if entrance_number:
+        order_detail += f', подъезд {delivery_point.get("entrance_number")}'
+    order_detail += f'\nТелефон: {customer.get("phone")}'
     return order_detail
 
 
@@ -55,6 +57,7 @@ async def get_order_detail(order: dict) -> str:
     products, count = await product_list(order.get('items'))
     delivery_point = order.get('delivery_point')
     customer = order.get('customer')
+    entrance_number = delivery_point.get("entrance_number")
     order_detail += (
         f'{products}'
         f'{count + 1}. Доставка - {order.get("delivery_price")} руб.\n'
@@ -62,10 +65,11 @@ async def get_order_detail(order: dict) -> str:
         f'Способ оплаты: {order.get("payment_method_display")}\n\n'
         f'Комментарий: {order.get("comment")}\n\n'
         f'Адрес: {delivery_point.get("street")}, '
-        f'{delivery_point.get("house_number")}, '
-        f'подъезд {delivery_point.get("entrance_number")}\n'
-        f'Телефон: {customer.get("phone")}'
+        f'{delivery_point.get("house_number")}'
     )
+    if entrance_number:
+        order_detail += f', подъезд {delivery_point.get("entrance_number")}'
+    order_detail += f'\nТелефон: {customer.get("phone")}'
     return order_detail
 
 

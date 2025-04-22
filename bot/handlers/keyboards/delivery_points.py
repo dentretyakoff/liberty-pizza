@@ -40,14 +40,18 @@ def generate_streets_buttons(data: dict, prefix: str):
 
 def generate_my_delivery_points_buttons(delivery_points: dict):
     """Генерирует кнопки выбора точки доставки."""
-    buttons = [
-        InlineKeyboardButton(
-            text=(f'{dp.get("street")}, '
-                  f'{dp.get("house_number")}, '
-                  f'подъезд {dp.get("entrance_number")}'),
-            callback_data=f'delivery_point_id_{dp.get("id")}')
-        for dp in delivery_points
-    ]
+    buttons = []
+    for dp in delivery_points:
+        text = f'{dp.get("street")}, {dp.get("house_number")}'
+        if dp.get('entrance_number'):
+            text += f', подъезд {dp.get("entrance_number")}'
+        buttons.append(
+            InlineKeyboardButton(
+                text=text,
+                callback_data=f'delivery_point_id_{dp.get("id")}'
+            )
+        )
+
     buttons.append(areas_button)
     return get_form_keyboard(*buttons)
 

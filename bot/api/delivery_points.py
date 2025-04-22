@@ -15,6 +15,13 @@ async def get_streets(area_id: int, limit: int, offset: int):
     return streets
 
 
+async def get_street(street_id: int):
+    """Получает улицу по id."""
+    streets = await async_session(
+        f'delivery-points/streets/{street_id}', 'GET')
+    return streets
+
+
 async def create_delivery_point(data: dict):
     """Создает точку доставки."""
     delivery_point = await async_session(

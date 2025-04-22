@@ -6,6 +6,7 @@ from aiogram.methods import SendMessage
 from api.delivery_points import (
     get_areas,
     get_streets,
+    get_street,
     create_delivery_point,
     get_my_delivery_points,
     set_my_delivery_point
@@ -68,10 +69,26 @@ async def input_house_number(
     house_number = validate_house_number(message.text.strip())
     await state.update_data(house_number=house_number)
     data = await state.get_data()
-    await delete_previous_message(data.get('message_id'), message)
-    sent_message = await message.answer('Введите номер подъезда:')
-    await state.update_data(message_id=sent_message.message_id)
-    await state.set_state(AddressForm.entrance_number)
+    await delete_previous_message(data.pop('message_id'), message)
+    street = await get_street(data.get('street'))
+    exists_entrance = street.get('exists_entrance')
+    if exists_entrance:
+        sent_message = await message.answer('Введите номер подъезда:')
+        await state.update_data(message_id=sent_message.message_id)
+        await state.set_state(AddressForm.entrance_number)
+    else:
+        data['telegram_id'] = message.from_user.id
+        await create_delivery_point(data)
+        await state.clear()
+        customer = await get_customer(message.from_user.id)
+        phone = customer.get('phone')
+        if phone:
+            return await message.answer(
+                text='Номер телефона для связи',
+                reply_markup=generate_phone_buttons(phone))
+        sent_message = await message.answer('Введите номер телефона:')
+        await state.update_data(phone_message_id=sent_message.message_id)
+        await state.set_state(UserForm.phone)
 
 
 @router.message(AddressForm.entrance_number)
