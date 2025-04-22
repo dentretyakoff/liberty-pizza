@@ -24,8 +24,20 @@ payment_card_button = InlineKeyboardButton(
     text='Оплатить на месте (картой по терминалу)',
     callback_data='payment_card'
 )
+request_comment_yes_button = InlineKeyboardButton(
+    text='Да',
+    callback_data='request_comment_yes'
+)
+request_comment_no_button = InlineKeyboardButton(
+    text='Нет',
+    callback_data='request_comment_no'
+)
 
 payment_method_keyboard = get_form_keyboard(
     payment_online_button,
     payment_card_button
+)
+request_comment_keyboard = get_form_keyboard(
+    request_comment_yes_button,
+    request_comment_no_button
 )

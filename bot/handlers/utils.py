@@ -1,10 +1,14 @@
 import base64
+import logging
 from decimal import Decimal
 
-from aiogram.types import BufferedInputFile
+from aiogram.types import BufferedInputFile, Message, CallbackQuery
 
 from api.users import get_customer, get_cart
 from api.delivery_points import get_my_delivery_point
+
+
+logger = logging.getLogger(__name__)
 
 
 async def product_list(items: list) -> tuple[str, int]:
@@ -90,3 +94,14 @@ async def make_image_from_base64(
     из него BufferedInputFile для отправки в телеграмм."""
     return BufferedInputFile(
         file=base64.b64decode(image_base64), filename=f'{filename}.png')
+
+
+async def delete_previous_message(
+        message_id: int,
+        message: Message | CallbackQuery = None) -> None:
+    try:
+        await message.bot.delete_message(
+            chat_id=message.chat.id,
+            message_id=message_id)
+    except Exception as e:
+        logging.error(f'Ошибка удаления сообщения: {e}')

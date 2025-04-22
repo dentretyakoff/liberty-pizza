@@ -1,3 +1,5 @@
+import logging
+
 from aiogram import Router, F
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message
@@ -16,9 +18,15 @@ from handlers.keyboards import (
 )
 from handlers.states import ProductForm
 from core.validators import validate_quantity_is_number
-from .utils import get_product_detail, make_image_from_base64
+from .utils import (
+    get_product_detail,
+    make_image_from_base64,
+    delete_previous_message
+)
 
 router = Router()
+
+logger = logging.getLogger(__name__)
 
 
 @router.callback_query(F.data == 'categories')
@@ -91,14 +99,7 @@ async def input_quantity(
     await state.update_data(quantity=quantity)
     data = await state.get_data()
     data['telegram_id'] = message.from_user.id
-    request_msg_id = data.pop('request_msg_id')
-    if request_msg_id:
-        try:
-            await message.bot.delete_message(
-                chat_id=message.chat.id,
-                message_id=request_msg_id)
-        except Exception as e:
-            print(f'Не удалось удалить сообщение: {e}')
+    await delete_previous_message(data.get('request_msg_id'), message)
     await add_cartitem(data)
     await state.clear()
     await answer_with_detail_product(

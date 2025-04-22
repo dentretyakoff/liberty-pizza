@@ -6,7 +6,8 @@ from handlers.keyboards.delivery_points import (
 )
 from handlers.keyboards.users import (
     generate_phone_buttons,
-    payment_method_keyboard
+    payment_method_keyboard,
+    request_comment_keyboard
 )
 from handlers.keyboards.base import (
     back_to_main_keyboard,
