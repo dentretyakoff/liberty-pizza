@@ -19,6 +19,7 @@ from handlers.keyboards import (
 )
 from handlers.states import AddressForm, UserForm
 from core.validators import validate_house_number
+from handlers.utils import delete_previous_message
 
 router = Router()
 
@@ -53,7 +54,9 @@ async def street_selected(
     """Запоминает выбранную улицу, просит указать номер дома."""
     street_id = int(callback_query.data.split('_')[-1])
     await state.update_data(street=street_id)
-    await callback_query.message.edit_text('Введите номер дома:')
+    sent_message = await callback_query.message.edit_text(
+        'Введите номер дома:')
+    await state.update_data(message_id=sent_message.message_id)
     await state.set_state(AddressForm.house_number)
 
 
@@ -64,7 +67,10 @@ async def input_house_number(
     """Запоминает номер дома."""
     house_number = validate_house_number(message.text.strip())
     await state.update_data(house_number=house_number)
-    await message.answer('Введите номер подъезда:')
+    data = await state.get_data()
+    await delete_previous_message(data.get('message_id'), message)
+    sent_message = await message.answer('Введите номер подъезда:')
+    await state.update_data(message_id=sent_message.message_id)
     await state.set_state(AddressForm.entrance_number)
 
 
@@ -77,6 +83,7 @@ async def input_entrance_number(
     await state.update_data(entrance_number=entrance_number)
     data = await state.get_data()
     data['telegram_id'] = message.from_user.id
+    await delete_previous_message(data.pop('message_id'), message)
     await create_delivery_point(data)
     await state.clear()
     customer = await get_customer(message.from_user.id)
@@ -85,7 +92,8 @@ async def input_entrance_number(
         return await message.answer(
             text='Номер телефона для связи',
             reply_markup=generate_phone_buttons(phone))
-    await message.answer('Введите номер телефона:')
+    sent_message = await message.answer('Введите номер телефона:')
+    await state.update_data(phone_message_id=sent_message.message_id)
     await state.set_state(UserForm.phone)
 
 
@@ -112,5 +120,7 @@ async def set_delivery_point(
         return await callback_query.message.edit_text(
             text='Номер телефона для связи',
             reply_markup=generate_phone_buttons(phone))
-    await callback_query.message.answer('Введите номер телефона:')
+    sent_message = await callback_query.message.edit_text(
+        'Введи номер телефона:')
+    await state.update_data(phone_message_id=sent_message.message_id)
     await state.set_state(UserForm.phone)
