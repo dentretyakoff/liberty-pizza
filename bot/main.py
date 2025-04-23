@@ -1,13 +1,11 @@
 import asyncio
 import logging
 
-from aiogram import Bot
 from aiogram import Dispatcher
-from aiogram.client.bot import DefaultBotProperties
-from aiogram.enums import ParseMode
 
-from setup import setup_bot_commands, setup_routers
+from setup import setup_bot_commands, setup_routers, setup_middleware
 from core import settings
+from bot_instance import bot
 
 
 logging.basicConfig(
@@ -15,15 +13,13 @@ logging.basicConfig(
     format='%(asctime)s - [%(levelname)s] - %(name)s - '
            '%(filename)s.%(funcName)s(%(lineno)d) - %(message)s')
 
-bot = Bot(token=settings.TOKEN,
-          default=DefaultBotProperties(parse_mode=ParseMode.HTML))
-
 
 async def main():
     """Запуск бота."""
     dispatcher = Dispatcher()
     dispatcher.startup.register(setup_bot_commands)
     dispatcher.startup.register(setup_routers)
+    dispatcher.startup.register(setup_middleware)
 
     await dispatcher.start_polling(bot)
 

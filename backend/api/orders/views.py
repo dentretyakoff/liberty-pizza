@@ -43,7 +43,7 @@ class OrderViewSet(mixins.CreateModelMixin,
                         status=status.HTTP_201_CREATED,
                         headers=headers)
 
-    @action(detail=True, methods=['patch'])
+    @action(detail=True, methods=['patch'], url_path='cancel')
     def cancel_order(self, request, pk):
         order = get_object_or_404(Order, pk=pk)
         order.status = OrderStatus.CANCELLED

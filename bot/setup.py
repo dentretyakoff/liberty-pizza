@@ -9,6 +9,7 @@ from handlers.common import router as common_router
 from handlers.delivery_points import router as delivery_points_router
 from handlers.orders import router as orders_router
 from handlers.users import router as users_router
+from middlewares.only_private import OnlyPrivateMiddleware
 
 
 async def setup_bot_commands(bot: Bot) -> None:
@@ -34,3 +35,9 @@ def setup_routers(dispatcher: Dispatcher) -> None:
     dispatcher.include_router(delivery_points_router)
     dispatcher.include_router(orders_router)
     dispatcher.include_router(users_router)
+
+
+def setup_middleware(dispatcher: Dispatcher) -> None:
+    """Регистрация middleware."""
+    dispatcher.message.middleware(OnlyPrivateMiddleware())
+    dispatcher.callback_query.middleware(OnlyPrivateMiddleware())

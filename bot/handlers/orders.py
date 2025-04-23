@@ -9,6 +9,10 @@ from handlers.keyboards import (
     back_to_orders_keyboard
 )
 from handlers.utils import get_order_detail
+from core.constants import PaymentMethod
+from core import settings
+from bot_instance import bot
+from celery_app import start_payment_check
 
 router = Router()
 
@@ -30,7 +34,7 @@ async def order_detail(callback_query: CallbackQuery) -> SendMessage:
     """Детали заказа клиента."""
     order_id = int(callback_query.data.split('_')[-1])
     order = await get_order(order_id)
-    text = await get_order_detail(order)
+    text = get_order_detail(order)
     await callback_query.message.edit_text(
         text=text,
         reply_markup=back_to_orders_keyboard)
@@ -40,6 +44,12 @@ async def order_detail(callback_query: CallbackQuery) -> SendMessage:
 async def make_order(callback_query: CallbackQuery) -> SendMessage:
     """Создает заказ."""
     order = await create_order(callback_query.from_user.id)
+    status = order.get('payment_method')
+    if status == PaymentMethod.CARD:
+        text = get_order_detail(order)
+        await bot.send_message(chat_id=settings.GROUP_ID, text=text)
+    elif status == PaymentMethod.ROBOKASSA:
+        start_payment_check(order.get('id'), callback_query.from_user.id)
     await callback_query.message.edit_text(
         text='Спасибо за заказ.',
         reply_markup=generate_payment_link_buttons(order.get('payment_url')))

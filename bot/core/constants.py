@@ -10,7 +10,7 @@ class MessagesConstants:
     )
     ORDER_CANCELLED = '❌ Ваш заказ отменен.'
     PAYMENT_NOT_RECEIVED = '❌ Оплата не поступила, заказ отменён.'
-    PAYMENT_OK = '✅ Оплата подтверждена! Номера стикеров:'
+    PAYMENT_OK = '✅ Оплата подтверждена! Ожидайте курьера.'
 
 
 class CommandConstants:
@@ -47,3 +47,9 @@ class InputValidationConstants:
 
 HOUSE_NUMBER_PATTERN = r'^[\d]+[\/\-\s]?[А-Яа-яA-Za-z0-9]*$'
 PHONE_PATTERN = r'^(?:\+7|8)\d{10}$'
+
+
+class PaymentMethod:
+    CASH = 'cash'
+    CARD = 'card'
+    ROBOKASSA = 'robokassa'

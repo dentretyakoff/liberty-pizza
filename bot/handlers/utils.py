@@ -11,7 +11,7 @@ from api.delivery_points import get_my_delivery_point
 logger = logging.getLogger(__name__)
 
 
-async def product_list(items: list) -> tuple[str, int]:
+def product_list(items: list) -> tuple[str, int]:
     product_list = ''
     count = 0
     for i, product in enumerate(items, 1):
@@ -33,7 +33,7 @@ async def get_pre_order_detail(telegram_id: int) -> str:
     cart = await get_cart(telegram_id)
     delivery_price = cart.get('delivery_price')
     order_detail = 'Детали заказа:\n'
-    products, count = await product_list(cart.get('items'))
+    products, count = product_list(cart.get('items'))
     total = Decimal(cart.get("total_price")) + Decimal(delivery_price)
     entrance_number = delivery_point.get("entrance_number")
     order_detail += (
@@ -51,10 +51,10 @@ async def get_pre_order_detail(telegram_id: int) -> str:
     return order_detail
 
 
-async def get_order_detail(order: dict) -> str:
+def get_order_detail(order: dict) -> str:
     """Детали заказа."""
     order_detail = 'Детали заказа:\n'
-    products, count = await product_list(order.get('items'))
+    products, count = product_list(order.get('items'))
     delivery_point = order.get('delivery_point')
     customer = order.get('customer')
     entrance_number = delivery_point.get("entrance_number")
@@ -86,7 +86,7 @@ async def get_product_detail(product: dict) -> str:
 async def get_cart_detail(cart: dict) -> str:
     """Детали корзины."""
     cart_detail = 'Корзина:\n\n'
-    products, _ = await product_list(cart.get('items'))
+    products, _ = product_list(cart.get('items'))
     cart_detail += products
     cart_detail += f'\nИтого: {cart.get("total_price")} руб.'
     return cart_detail

@@ -1,4 +1,4 @@
-from api.base import async_session
+from api.base import async_session, sync_session
 
 
 async def create_order(telegram_id: int):
@@ -18,3 +18,13 @@ async def get_order(order_id: int):
     """Получает детали заказа."""
     order = await async_session(f'orders/{order_id}', 'GET')
     return order
+
+
+def get_order_sync(order_id: int):
+    """Получает детали заказа."""
+    return sync_session(f'orders/{order_id}', 'GET')
+
+
+def cancel_order(order_id: int):
+    """Отменяет заказ."""
+    return sync_session(f'orders/{order_id}/cancel/', 'PATCH')
