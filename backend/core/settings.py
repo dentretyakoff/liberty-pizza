@@ -11,10 +11,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('SECRET_KEY', 'Develop_KEY')
 DEBUG = os.getenv('DEBUG', 'False').lower() in ('true', '1', 't')
 ALLOWED_HOSTS = ['*']
-CSRF_TRUSTED_ORIGINS = [
-    'https://liverty-pizza.local',
-    'https://liverty-pizza.ru',
-]
+CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', '').split(',')
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -129,10 +126,10 @@ MERCHANT_LOGIN = os.getenv('MERCHANT_LOGIN')
 MERCHANT_PASSWORD_1 = os.getenv('MERCHANT_PASSWORD_1')
 MERCHANT_PASSWORD_2 = os.getenv('MERCHANT_PASSWORD_2')
 IS_TEST = int(os.getenv('IS_TEST', 1))
-ROBOKASSA_URL = 'https://auth.robokassa.ru/Merchant/Index.aspx'
+ROBOKASSA_URL = os.getenv('ROBOKASSA_URL', '')
 
 # Название проекта для админки
-PROJECT_NAME = os.getenv('PROJECT_NAME')
+PROJECT_NAME = os.getenv('PROJECT_NAME', 'Project Name')
 
 # Пагинация
 LARGE_DEFAULT_LIMIT = 100
