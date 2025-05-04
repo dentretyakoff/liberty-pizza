@@ -4,15 +4,15 @@ from handlers.keyboards.base import get_form_keyboard
 
 
 categories_button = InlineKeyboardButton(
-    text='Товары',
+    text='🏪 Товары',
     callback_data='categories'
 )
 orders_button = InlineKeyboardButton(
-    text='Заказы',
+    text='📝 Заказы',
     callback_data='orders'
 )
 cart_button = InlineKeyboardButton(
-    text='Корзина',
+    text='🛒 Корзина',
     callback_data='cart'
 )
 
