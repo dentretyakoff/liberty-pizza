@@ -21,7 +21,8 @@ from core.validators import validate_quantity_is_number
 from .utils import (
     get_product_detail,
     make_image_from_base64,
-    delete_previous_message
+    delete_previous_message,
+    safe_delete_message
 )
 
 router = Router()
@@ -44,7 +45,7 @@ async def products(callback_query: CallbackQuery) -> SendMessage:
     category_id = int(callback_query.data.split('_')[-1])
     products_data = await get_products(
         category_id, callback_query.from_user.id)
-    await callback_query.message.delete()
+    await safe_delete_message(callback_query.message)
     await callback_query.message.answer(
         text='Выбери товар:',
         reply_markup=generate_products_buttons(products_data))
@@ -83,7 +84,7 @@ async def add_cartitem_to_cart(
     """Запоминает выбранный товар."""
     product_id = int(callback_query.data.split('_')[-1])
     await state.update_data(product=product_id)
-    await callback_query.message.delete()
+    await safe_delete_message(callback_query.message)
     request_msg = await callback_query.message.answer(
         'Введите количество товара:')
     await state.update_data(request_msg_id=request_msg.message_id)
@@ -118,7 +119,7 @@ async def answer_with_detail_product(
     product_data = await get_product(product_id, telegram_id)
     product_detail = await get_product_detail(product_data)
     image_base64 = product_data.get('image_base64')
-    await message.delete()
+    await safe_delete_message(message)
     if image_base64:
         image = await make_image_from_base64(image_base64, 'product')
         return await message.answer_photo(

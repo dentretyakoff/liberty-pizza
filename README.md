@@ -84,7 +84,7 @@ http://your-domain.ru/admin
 ```
 - Скопируй токен бота и заполни его `API_TOKEN` в файле `.env`
 ```
-https://libertypizza.ru/admin/authtoken/tokenproxy/
+https://your-domain.ru/admin/authtoken/tokenproxy/
 ```
 - Перезапусти контейнеры
 ```

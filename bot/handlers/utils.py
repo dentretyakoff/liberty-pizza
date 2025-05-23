@@ -3,6 +3,7 @@ import logging
 from decimal import Decimal
 
 from aiogram.types import BufferedInputFile, Message, CallbackQuery
+from aiogram.exceptions import TelegramBadRequest
 
 from api.users import get_customer, get_cart
 from api.delivery_points import get_my_delivery_point
@@ -109,3 +110,14 @@ async def delete_previous_message(
             message_id=message_id)
     except Exception as e:
         logging.error(f'Ошибка удаления сообщения: {e}')
+
+
+async def safe_delete_message(message: Message) -> None:
+    try:
+        await message.delete()
+    except TelegramBadRequest as e:
+        text = str(e).lower()
+        if "message can't be deleted for everyone" in text:
+            logger.info('Не могу удалить старое сообщение.')
+        else:
+            logger.warning(f'Ошибка при удалении сообщения: {e}')
