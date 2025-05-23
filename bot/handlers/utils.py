@@ -5,9 +5,6 @@ from decimal import Decimal
 from aiogram.types import BufferedInputFile, Message, CallbackQuery
 from aiogram.exceptions import TelegramBadRequest
 
-from api.users import get_customer, get_cart
-from api.delivery_points import get_my_delivery_point
-
 
 logger = logging.getLogger(__name__)
 
@@ -25,33 +22,6 @@ def product_list(items: list) -> tuple[str, int]:
     return product_list, count
 
 
-async def get_pre_order_detail(telegram_id: int) -> str:
-    """Детали заказа перед оформлением."""
-    # TODO получение товаров, адреса доставки и номера
-    # телефона одной ручкой order_detail
-    customer = await get_customer(telegram_id)
-    delivery_point = await get_my_delivery_point(telegram_id)
-    cart = await get_cart(telegram_id)
-    delivery_price = cart.get('delivery_price')
-    order_detail = 'Детали заказа:\n'
-    products, count = product_list(cart.get('items'))
-    total = Decimal(cart.get("total_price")) + Decimal(delivery_price)
-    entrance_number = delivery_point.get("entrance_number")
-    order_detail += (
-        f'{products}'
-        f'{count + 1}. Доставка - {delivery_price} руб.\n'
-        f'\nИтого: {total} руб.\n'
-        f'Способ оплаты: {cart.get("payment_method_display")}\n\n'
-        f'Комментарий: {cart.get("comment")}\n\n'
-        f'Адрес: {delivery_point.get("street")}, '
-        f'{delivery_point.get("house_number")}'
-    )
-    if entrance_number:
-        order_detail += f', подъезд {delivery_point.get("entrance_number")}'
-    order_detail += f'\nТелефон: {customer.get("phone")}'
-    return order_detail
-
-
 def get_order_detail(order: dict) -> str:
     """Детали заказа."""
     order_detail = 'Детали заказа:\n'
@@ -59,17 +29,23 @@ def get_order_detail(order: dict) -> str:
     delivery_point = order.get('delivery_point')
     customer = order.get('customer')
     entrance_number = delivery_point.get("entrance_number")
+    total_price = order.get('total_price')
+    delivery_price = order.get('delivery_price')
+    if order.get('type') == 'cart':
+        total = Decimal(total_price) + Decimal(delivery_price)
+    else:
+        total = total_price
     order_detail += (
         f'{products}'
         f'{count + 1}. Доставка - {order.get("delivery_price")} руб.\n'
-        f'\nИтого: {order.get("total_price")} руб.\n'
+        f'\nИтого: {total} руб.\n'
         f'Способ оплаты: {order.get("payment_method_display")}\n\n'
         f'Комментарий: {order.get("comment")}\n\n'
         f'Адрес: {delivery_point.get("street")}, '
         f'{delivery_point.get("house_number")}'
     )
     if entrance_number:
-        order_detail += f', подъезд {delivery_point.get("entrance_number")}'
+        order_detail += f', подъезд {entrance_number}'
     order_detail += f'\nТелефон: {customer.get("phone")}'
     return order_detail
 
@@ -89,7 +65,8 @@ async def get_cart_detail(cart: dict) -> str:
     cart_detail = 'Корзина:\n\n'
     products, _ = product_list(cart.get('items'))
     cart_detail += products
-    cart_detail += f'\nИтого: {cart.get("total_price")} руб.'
+    cart_detail += (f'\nИтого: {cart.get("total_price")} руб.\n'
+                    '<i>*без учета доставки</i>')
     return cart_detail
 
 

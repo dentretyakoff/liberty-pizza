@@ -75,12 +75,14 @@ class OrderRetrieveSerializer(serializers.ModelSerializer):
     payment_url = serializers.SerializerMethodField()
     customer = CustomerRetrieveSerializer()
     delivery_point = DeliveryPointSerializer()
+    type = serializers.SerializerMethodField()
 
     class Meta:
         model = Order
         fields = (
             'id',
             'status',
+            'type',
             'customer',
             'payment_method',
             'payment_method_display',
@@ -102,3 +104,6 @@ class OrderRetrieveSerializer(serializers.ModelSerializer):
             token = signing.dumps(obj.id)
             return reverse('orders:robokassa_redirect', args=[token])
         return None
+
+    def get_type(self, obj):
+        return 'order'

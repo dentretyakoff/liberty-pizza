@@ -18,9 +18,9 @@ class OrderAdmin(TimeStampedAdmin):
     list_display = (
         'id',
         'customer',
+        'customer_phone',
         'status',
         'payment_method',
-        'comment',
         'total_price_display',
         'delivery_price_display',
         'delivery_point',
@@ -28,6 +28,7 @@ class OrderAdmin(TimeStampedAdmin):
     )
     readonly_fields = (
         'customer',
+        'customer_phone',
         'payment_method',
         'total_price_display',
         'comment',
@@ -40,10 +41,10 @@ class OrderAdmin(TimeStampedAdmin):
     search_fields = (
         'id',
         'customer__telegram_id',
-        'customer__nickname'
+        'customer__nickname',
+        'customer__phone',
     )
     list_filter = (
-        'customer',
         'status',
     )
     inlines = [OrderItemInline]
@@ -58,3 +59,7 @@ class OrderAdmin(TimeStampedAdmin):
     def delivery_price_display(self, obj):
         return f'{obj.delivery_price} ₽'
     delivery_price_display.short_description = 'Доставка'
+
+    def customer_phone(self, obj):
+        return obj.customer.phone if obj.customer else '-'
+    customer_phone.short_description = 'Телефон клиента'

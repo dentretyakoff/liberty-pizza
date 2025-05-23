@@ -1,5 +1,6 @@
 from rest_framework import serializers
 
+from api.delivery_points.serializers import DeliveryPointSerializer
 from users.models import Customer, Cart, CartItem
 
 
@@ -67,27 +68,31 @@ class CartItemRetrieveSerializer(serializers.ModelSerializer):
 
 
 class CartRetrieveSerializer(serializers.ModelSerializer):
-    customer = serializers.SlugRelatedField(
-        read_only=True,
-        slug_field='telegram_id'
-    )
+    customer = CustomerRetrieveSerializer()
+    delivery_point = DeliveryPointSerializer()
     items = CartItemRetrieveSerializer(many=True, read_only=True)
+    type = serializers.SerializerMethodField()
 
     class Meta:
         model = Cart
         fields = (
             'id',
             'customer',
+            'type',
             'payment_method',
             'payment_method_display',
             'comment',
             'total_price',
             'delivery_price',
-            'items'
+            'delivery_point',
+            'items',
         )
 
     def get_payment_method_display(self, obj):
         return obj.get_payment_method_display()
+
+    def get_type(self, obj):
+        return 'cart'
 
 
 class CartItemCreateSerializer(serializers.ModelSerializer):
