@@ -28,16 +28,20 @@ class CartAdmin(TimeStampedAdmin):
     list_display = (
         'id',
         'customer',
+        'customer_phone',
         'payment_method',
         'comment',
-        'total_price_display'
+        'total_price_display',
+        'delivery_price_display'
     )
     list_display_links = ('id', 'customer')
     readonly_fields = (
         'customer',
+        'customer_phone',
         'payment_method',
         'comment',
-        'total_price_display'
+        'total_price_display',
+        'delivery_price_display'
     )
     inlines = [CartItemInline]
 
@@ -47,3 +51,11 @@ class CartAdmin(TimeStampedAdmin):
     def total_price_display(self, obj):
         return f'{obj.total_price} ₽'
     total_price_display.short_description = 'Общая сумма'
+
+    def delivery_price_display(self, obj):
+        return f'{obj.delivery_price} ₽'
+    delivery_price_display.short_description = 'Доставка'
+
+    def customer_phone(self, obj):
+        return obj.customer.phone if obj.customer else '-'
+    customer_phone.short_description = 'Телефон клиента'

@@ -5,7 +5,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message
 from aiogram.methods import SendMessage
 
-from api.users import update_customer, update_cart
+from api.users import update_customer, update_cart, get_cart
 from handlers.keyboards import (
     create_order_keyboard,
     payment_method_keyboard,
@@ -13,7 +13,7 @@ from handlers.keyboards import (
 )
 from handlers.states import UserForm, CartForm
 from core.validators import validate_phone_number, validate_message_is_text
-from handlers.utils import get_pre_order_detail, delete_previous_message
+from handlers.utils import get_order_detail, delete_previous_message
 
 router = Router()
 
@@ -104,8 +104,9 @@ async def select_payment_method(callback_query: CallbackQuery) -> SendMessage:
     await update_cart(
         telegram_id=callback_query.from_user.id,
         data={'payment_method': payment_method})
-    order_detail = await get_pre_order_detail(callback_query.from_user.id)
+    cart = await get_cart(callback_query.from_user.id)
+    text = get_order_detail(cart)
     await callback_query.message.edit_text(
-        text=order_detail,
+        text=text,
         reply_markup=create_order_keyboard
     )

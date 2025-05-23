@@ -77,13 +77,19 @@ class Cart(BaseModel):
         return str(total.quantize(Decimal('0.01'), rounding=ROUND_DOWN))
 
     @property
-    def delivery_price(self) -> str | None:
+    def delivery_price(self) -> str:
         delivery_point = self.customer.delivery_points.filter(
             actual=True).first()
         if delivery_point:
             cost = delivery_point.street.cost
             return str(cost.quantize(Decimal('0.01'), rounding=ROUND_DOWN))
-        return None
+        return '0'
+
+    @property
+    def delivery_point(self) -> models.Model:
+        delivery_point = self.customer.delivery_points.filter(
+            actual=True).first()
+        return delivery_point
 
 
 class CartItem(BaseModel):
