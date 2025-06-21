@@ -63,6 +63,7 @@ class OrderViewSet(mixins.CreateModelMixin,
         if 'OK' in sign:
             order_id = request.query_params.get('InvId')
             order = get_object_or_404(Order, pk=order_id)
-            order.paid_success()
+            order.status = OrderStatus.PAID
+            order.save()
             return Response(sign, status=status.HTTP_200_OK)
         return Response(sign, status=status.HTTP_400_BAD_REQUEST)
