@@ -9,6 +9,7 @@ from .delivery_points.views import (
     DeliveryPointViewSet
 )
 from .products.views import CategoryViewSet, ProductViewSet
+from .about.views import ContactViewSet
 
 
 router = DefaultRouter()
@@ -21,6 +22,7 @@ router.register('delivery-points/streets', StreetViewSet)
 router.register('delivery-points', DeliveryPointViewSet)
 router.register('categories', CategoryViewSet)
 router.register('products', ProductViewSet)
+router.register('contacts', ContactViewSet)
 
 
 urlpatterns = [

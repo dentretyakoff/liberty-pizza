@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     'users.apps.UsersConfig',
     'products.apps.ProductsConfig',
     'delivery_points.apps.DeliveryPointsConfig',
+    'about.apps.AboutConfig',
 ]
 
 MIDDLEWARE = [

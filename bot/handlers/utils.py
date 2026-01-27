@@ -5,6 +5,7 @@ from decimal import Decimal
 from aiogram.types import BufferedInputFile, Message, CallbackQuery
 from aiogram.exceptions import TelegramBadRequest
 
+from core.constants import MessagesConstants
 
 logger = logging.getLogger(__name__)
 
@@ -98,3 +99,16 @@ async def safe_delete_message(message: Message) -> None:
             logger.info('Не могу удалить старое сообщение.')
         else:
             logger.warning(f'Ошибка при удалении сообщения: {e}')
+
+
+def make_message_contacts(contacts: dict) -> str:
+    """Подготоавливает сообщение с контактами."""
+    if not contacts:
+        return MessagesConstants.CONTACTS
+
+    text = ''
+    for contact in contacts.values():
+        text += contact
+        text += '\n\n'
+
+    return text
