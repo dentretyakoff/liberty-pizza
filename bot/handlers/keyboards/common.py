@@ -15,10 +15,15 @@ cart_button = InlineKeyboardButton(
     text='🛒 Корзина',
     callback_data='cart'
 )
+contacts_button = InlineKeyboardButton(
+    text='📝 Контакты',
+    callback_data='contacts'
+)
 
 
 main_menu_keyboard = get_form_keyboard(
     categories_button,
     orders_button,
-    cart_button
+    cart_button,
+    contacts_button
 )
