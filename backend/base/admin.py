@@ -16,5 +16,5 @@ class TimeStampedAdmin(admin.ModelAdmin):
 
 
 project_name = settings.PROJECT_NAME
-admin.site.site_header = f'Панель управления {project_name}'
-admin.site.site_title = f'Панель управления {project_name}'
+admin.site.site_header = project_name
+admin.site.site_title = project_name

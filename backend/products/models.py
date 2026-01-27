@@ -29,7 +29,7 @@ class Product(BaseModel):
         blank=True
     )
     image = models.ImageField(
-        'Изображение',
+        'Фото',
         upload_to='images/',
         blank=True,
         null=True
