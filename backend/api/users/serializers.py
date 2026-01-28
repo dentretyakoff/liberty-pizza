@@ -1,25 +1,25 @@
 from rest_framework import serializers
 
 from api.delivery_points.serializers import DeliveryPointSerializer
-from users.models import Customer, Cart, CartItem
+from users.models import Customer, Cart, CartItem, GDPR
 
 
 class CustomerCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Customer
-        fields = ('telegram_id', 'nickname')
+        fields = ('telegram_id', 'nickname', 'gdpr_accepted')
 
 
 class CustomerUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Customer
-        fields = ('nickname', 'phone')
+        fields = ('nickname', 'phone', 'gdpr_accepted')
 
 
 class CustomerRetrieveSerializer(serializers.ModelSerializer):
     class Meta:
         model = Customer
-        fields = ('id', 'telegram_id', 'nickname', 'phone')
+        fields = ('id', 'telegram_id', 'nickname', 'phone', 'gdpr_accepted')
 
 
 class CartCreateSerializer(serializers.ModelSerializer):
@@ -116,3 +116,14 @@ class CartItemCreateSerializer(serializers.ModelSerializer):
         product = validated_data['product']
         validated_data['price'] = product.price
         return super().create(validated_data)
+
+
+class GDPRSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = GDPR
+        fields = (
+            'id',
+            'name',
+            'text',
+            'is_actual'
+        )

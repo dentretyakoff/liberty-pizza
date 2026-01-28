@@ -19,6 +19,11 @@ class Customer(BaseModel):
         blank=True,
         max_length=255
     )
+    gdpr_accepted = models.BooleanField(
+        default=False,
+        verbose_name='Согласие на ПД',
+        help_text='Статус согласия на обработку перс. данных'
+    )
     phone = models.CharField(
         validators=[
             RegexValidator(
@@ -122,3 +127,25 @@ class CartItem(BaseModel):
 
     def __str__(self):
         return f'{self.product}'
+
+
+class GDPR(BaseModel):
+    name = models.CharField(
+        max_length=200,
+        verbose_name='Наименование'
+    )
+    text = models.TextField(
+        max_length=2500,
+        verbose_name='Текст',
+    )
+    is_actual = models.BooleanField(
+        default=False,
+        verbose_name='Актуально'
+    )
+
+    class Meta:
+        verbose_name = 'Согласие на обработку ПД'
+        verbose_name_plural = 'Согласия на обработку ПД'
+
+    def __str__(self):
+        return self.name
