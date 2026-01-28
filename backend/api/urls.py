@@ -2,7 +2,12 @@ from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
 from .orders.views import OrderViewSet
-from .users.views import CustomerViewSet, CartViewSet, CartItemViewSet
+from .users.views import (
+    CustomerViewSet,
+    CartViewSet,
+    CartItemViewSet,
+    GDPRViewSet
+)
 from .delivery_points.views import (
     AreaViewSet,
     StreetViewSet,
@@ -23,6 +28,7 @@ router.register('delivery-points', DeliveryPointViewSet)
 router.register('categories', CategoryViewSet)
 router.register('products', ProductViewSet)
 router.register('contacts', ContactViewSet)
+router.register('gdpr', GDPRViewSet)
 
 
 urlpatterns = [

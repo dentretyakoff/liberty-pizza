@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from base.admin import TimeStampedAdmin
-from .models import Customer, Cart, CartItem
+from .models import Customer, Cart, CartItem, GDPR
 
 
 class CartItemInline(admin.TabularInline):
@@ -15,9 +15,9 @@ class CartItemInline(admin.TabularInline):
 
 @admin.register(Customer)
 class CustomerAdmin(TimeStampedAdmin):
-    list_display = ('id', 'telegram_id', 'nickname', 'phone')
+    list_display = ('id', 'telegram_id', 'nickname', 'phone', 'gdpr_accepted')
     list_display_links = ('id', 'telegram_id')
-    readonly_fields = ('telegram_id', 'nickname', 'phone')
+    readonly_fields = ('telegram_id', 'nickname', 'phone', 'gdpr_accepted')
 
     def has_add_permission(self, request):
         return False
@@ -59,3 +59,15 @@ class CartAdmin(TimeStampedAdmin):
     def customer_phone(self, obj):
         return obj.customer.phone if obj.customer else '-'
     customer_phone.short_description = 'Телефон клиента'
+
+
+@admin.register(GDPR)
+class GDPRAdmin(TimeStampedAdmin):
+    list_display = (
+        'id',
+        'name',
+        'text',
+        'is_actual'
+    )
+    list_display_links = ('name',)
+    readonly_fields = ('id',)

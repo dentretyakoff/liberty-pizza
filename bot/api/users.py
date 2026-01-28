@@ -58,3 +58,13 @@ async def add_cartitem(data: dict):
     await async_session(
         'customers/cart-items/', 'POST', data=data
     )
+
+
+async def get_gdpr():
+    response = await async_session('gdpr/', 'GET')
+    results = response.get('results', [])
+    gdpr = {}
+    if results and len(results) > 0:
+        gdpr = results[0]
+        return gdpr.get('text')
+    return gdpr

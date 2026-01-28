@@ -2,7 +2,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework import mixins, viewsets, status
 from rest_framework.response import Response
 
-from users.models import Customer, Cart, CartItem
+from users.models import Customer, Cart, CartItem, GDPR
 from .serializers import (
     CustomerCreateSerializer,
     CustomerUpdateSerializer,
@@ -11,7 +11,8 @@ from .serializers import (
     CartUpdateSerializer,
     CartRetrieveSerializer,
     CartItemCreateSerializer,
-    CartItemRetrieveSerializer
+    CartItemRetrieveSerializer,
+    GDPRSerializer
 )
 from .pagination import LargeLimitOffsetPagination
 
@@ -99,3 +100,8 @@ class CartItemViewSet(mixins.ListModelMixin,
             detail_serializer.data,
             status=status.HTTP_201_CREATED,
             headers=headers)
+
+
+class GDPRViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+    queryset = GDPR.objects.filter(is_actual=True)
+    serializer_class = GDPRSerializer
