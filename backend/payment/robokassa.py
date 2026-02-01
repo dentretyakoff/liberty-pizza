@@ -149,7 +149,7 @@ def build_receipt(order):
             'quantity': 1,
             'sum': to_robokassa_sum(order.delivery_price),
             'tax': 'none'}
-    items.append(delivery)
+        items.append(delivery)
     receipt = {'items': items}
     receipt_json = json.dumps(receipt, ensure_ascii=False)
     receipt_encoded = parse.quote(receipt_json)
