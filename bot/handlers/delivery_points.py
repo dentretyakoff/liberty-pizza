@@ -11,7 +11,7 @@ from api.delivery_points import (
     get_my_delivery_points,
     set_my_delivery_point
 )
-from api.users import get_customer
+from api.users import get_customer, update_cart
 from handlers.keyboards import (
     generate_areas_buttons,
     generate_streets_buttons,
@@ -20,7 +20,8 @@ from handlers.keyboards import (
 )
 from handlers.states import AddressForm, UserForm
 from core.validators import validate_house_number
-from handlers.utils import delete_previous_message
+from core.constants import ReceiptMethods
+from .utils import delete_previous_message, ask_or_show_phone
 
 router = Router()
 
@@ -131,13 +132,7 @@ async def set_delivery_point(
     """Запоминает выбранную точку доставки клиента."""
     delivery_point_id = int(callback_query.data.split('_')[-1])
     await set_my_delivery_point(delivery_point_id)
-    customer = await get_customer(callback_query.from_user.id)
-    phone = customer.get('phone')
-    if phone:
-        return await callback_query.message.edit_text(
-            text='Номер телефона для связи',
-            reply_markup=generate_phone_buttons(phone))
-    sent_message = await callback_query.message.edit_text(
-        'Введи номер телефона:')
-    await state.update_data(phone_message_id=sent_message.message_id)
-    await state.set_state(UserForm.phone)
+    await update_cart(
+        callback_query.from_user.id,
+        {'receipt_method_type': ReceiptMethods.DELIVERY})
+    await ask_or_show_phone(callback_query, state)

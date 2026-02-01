@@ -142,12 +142,13 @@ def build_receipt(order):
             'sum': to_robokassa_sum(item.price * item.quantity),
             'tax': item.product.tax
         })
-    delivery_point = order.customer.delivery_points.filter(actual=True).first()
-    delivery = {
-        'name': f'Доставка {delivery_point.street_display}',
-        'quantity': 1,
-        'sum': to_robokassa_sum(order.delivery_price),
-        'tax': 'none'}
+    delivery_point = order.delivery_point
+    if delivery_point:
+        delivery = {
+            'name': f'Доставка {delivery_point.street_display}',
+            'quantity': 1,
+            'sum': to_robokassa_sum(order.delivery_price),
+            'tax': 'none'}
     items.append(delivery)
     receipt = {'items': items}
     receipt_json = json.dumps(receipt, ensure_ascii=False)

@@ -7,6 +7,7 @@ from api.users.serializers import CustomerRetrieveSerializer
 from orders.models import Order, OrderItem
 from base.enum import PaymentMethod
 from users.models import Customer
+from users.enum import ReceiptMethods
 
 
 class OrderItemRetrieveSerializer(serializers.ModelSerializer):
@@ -47,7 +48,10 @@ class OrderCreateSerializer(serializers.ModelSerializer):
         telegram_id = validated_data.pop('telegram_id')
         customer = Customer.objects.get(telegram_id=telegram_id)
         cart = customer.cart
-        delivery_point = customer.delivery_points.filter(actual=True).first()
+        delivery_point = None
+        if cart.receipt_method_type == ReceiptMethods.DELIVERY:
+            delivery_point = customer.delivery_points.filter(
+                actual=True).first()
         order = Order.objects.create(
             payment_method=cart.payment_method,
             customer=customer,

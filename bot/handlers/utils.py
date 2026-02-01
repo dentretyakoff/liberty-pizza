@@ -2,10 +2,15 @@ import base64
 import logging
 from decimal import Decimal
 
+from aiogram.fsm.context import FSMContext
 from aiogram.types import BufferedInputFile, Message, CallbackQuery
 from aiogram.exceptions import TelegramBadRequest
 
+from api.users import get_customer
 from core.constants import MessagesConstants
+from .keyboards import generate_phone_buttons
+from .states import UserForm
+
 
 logger = logging.getLogger(__name__)
 
@@ -29,24 +34,28 @@ def get_order_detail(order: dict) -> str:
     products, count = product_list(order.get('items'))
     delivery_point = order.get('delivery_point')
     customer = order.get('customer')
-    entrance_number = delivery_point.get("entrance_number")
     total_price = order.get('total_price')
     delivery_price = order.get('delivery_price')
     if order.get('type') == 'cart':
         total = Decimal(total_price) + Decimal(delivery_price)
     else:
         total = total_price
+    order_detail += products
+    if delivery_point:
+        order_detail += (
+            f'{count + 1}. Доставка - '
+            f'{order.get("delivery_price")} руб.\n')
     order_detail += (
-        f'{products}'
-        f'{count + 1}. Доставка - {order.get("delivery_price")} руб.\n'
         f'\nИтого: {total} руб.\n'
         f'Способ оплаты: {order.get("payment_method_display")}\n\n'
-        f'Комментарий: {order.get("comment")}\n\n'
-        f'Адрес: {delivery_point.get("street")}, '
-        f'{delivery_point.get("house_number")}'
-    )
-    if entrance_number:
-        order_detail += f', подъезд {entrance_number}'
+        f'Комментарий: {order.get("comment")}\n\n')
+    if delivery_point:
+        order_detail += (
+            f'Адрес: {delivery_point.get("street")}, '
+            f'{delivery_point.get("house_number")}')
+        entrance_number = delivery_point.get("entrance_number")
+        if entrance_number:
+            order_detail += f', подъезд {entrance_number}'
     order_detail += f'\nТелефон: {customer.get("phone")}'
     return order_detail
 
@@ -112,3 +121,24 @@ def make_message_contacts(contacts: dict) -> str:
         text += '\n\n'
 
     return text
+
+
+async def ask_or_show_phone(
+    callback_query: CallbackQuery,
+    state: FSMContext,
+) -> None:
+    customer = await get_customer(callback_query.from_user.id)
+    phone = customer.get('phone')
+
+    if phone:
+        await callback_query.message.edit_text(
+            text='Номер телефона для связи',
+            reply_markup=generate_phone_buttons(phone),
+        )
+        return
+
+    sent_message = await callback_query.message.edit_text(
+        'Введи номер телефона:'
+    )
+    await state.update_data(phone_message_id=sent_message.message_id)
+    await state.set_state(UserForm.phone)
