@@ -30,6 +30,7 @@ class CartAdmin(TimeStampedAdmin):
         'customer',
         'customer_phone',
         'payment_method',
+        'receipt_method_type',
         'comment',
         'total_price_display',
         'delivery_price_display'
@@ -39,6 +40,7 @@ class CartAdmin(TimeStampedAdmin):
         'customer',
         'customer_phone',
         'payment_method',
+        'receipt_method_type',
         'comment',
         'total_price_display',
         'delivery_price_display'

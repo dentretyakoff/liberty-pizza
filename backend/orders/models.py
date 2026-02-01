@@ -8,6 +8,7 @@ from django.utils import timezone
 
 from base.models import BaseModel
 from base.enum import PaymentMethod
+from base.constants import ZERO
 from users.models import Customer
 from products.models import Product
 from delivery_points.models import DeliveryPoint
@@ -75,16 +76,16 @@ class Order(BaseModel):
     def total_price(self) -> str:
         total = sum(
             (item.price * item.quantity for item in self.items.all()),
-            start=Decimal('0')
+            start=ZERO
         )
         total += Decimal(self.delivery_price)
         return str(total.quantize(Decimal('0.01'), rounding=ROUND_DOWN))
 
     @property
     def delivery_price(self) -> str:
-        delivery_point = self.customer.delivery_points.filter(
-            actual=True).first()
-        cost = delivery_point.street.cost
+        if not self.delivery_point:
+            return ZERO
+        cost = self.delivery_point.street.cost
         return str(cost.quantize(Decimal('0.01'), rounding=ROUND_DOWN))
 
 

@@ -36,7 +36,7 @@ def generate_orders_buttons(orders: dict):
 
 
 create_order_button = InlineKeyboardButton(
-    text='Создать',
+    text='Подтвердить заказ',
     callback_data='create_order'
 )
 back_to_orders_button = InlineKeyboardButton(

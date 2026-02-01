@@ -49,7 +49,7 @@ class CartCreateSerializer(serializers.ModelSerializer):
 class CartUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Cart
-        fields = ('payment_method', 'comment')
+        fields = ('payment_method', 'comment', 'receipt_method_type')
 
 
 class CartItemRetrieveSerializer(serializers.ModelSerializer):
@@ -82,6 +82,7 @@ class CartRetrieveSerializer(serializers.ModelSerializer):
             'payment_method',
             'payment_method_display',
             'comment',
+            'receipt_method_type',
             'total_price',
             'delivery_price',
             'delivery_point',

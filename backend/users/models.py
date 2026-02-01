@@ -5,7 +5,9 @@ from django.core.validators import RegexValidator
 
 from base.models import BaseModel
 from base.enum import PaymentMethod
+from base.constants import ZERO
 from products.models import Product
+from .enum import ReceiptMethods
 
 
 class Customer(BaseModel):
@@ -62,6 +64,12 @@ class Cart(BaseModel):
         blank=True,
         default=''
     )
+    receipt_method_type = models.CharField(
+        verbose_name='Способ получения',
+        choices=ReceiptMethods,
+        default=ReceiptMethods.PICKUP,
+        max_length=10
+    )
 
     class Meta:
         verbose_name = 'Корзина'
@@ -77,21 +85,25 @@ class Cart(BaseModel):
     def total_price(self) -> Decimal:
         total = sum(
             (item.price * item.quantity for item in self.items.all()),
-            start=Decimal('0')
+            start=ZERO
         )
         return str(total.quantize(Decimal('0.01'), rounding=ROUND_DOWN))
 
     @property
     def delivery_price(self) -> str:
+        if self.receipt_method_type == ReceiptMethods.PICKUP:
+            return ZERO
         delivery_point = self.customer.delivery_points.filter(
             actual=True).first()
         if delivery_point:
             cost = delivery_point.street.cost
             return str(cost.quantize(Decimal('0.01'), rounding=ROUND_DOWN))
-        return '0'
+        return ZERO
 
     @property
     def delivery_point(self) -> models.Model:
+        if self.receipt_method_type == ReceiptMethods.PICKUP:
+            return
         delivery_point = self.customer.delivery_points.filter(
             actual=True).first()
         return delivery_point

@@ -24,7 +24,7 @@ class MessagesConstants:
 
 
 class CommandConstants:
-    start = 'Начать работу с чат-ботом.'
+    start = 'Главное меню'
 
 
 class OrderStatus:
@@ -63,3 +63,8 @@ class PaymentMethod:
     CASH = 'cash'
     CARD = 'card'
     ROBOKASSA = 'robokassa'
+
+
+class ReceiptMethods:
+    DELIVERY = 'delivery'
+    PICKUP = 'pickup'

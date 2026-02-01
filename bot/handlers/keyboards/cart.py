@@ -15,9 +15,27 @@ def generate_cart_buttons(cart: dict):
 
 making_order_button = InlineKeyboardButton(
     text='✍️ К оформлению заказа',
+    callback_data='receipt_method'
+)
+receipt_method_delivery_button = InlineKeyboardButton(
+    text='🚗 Доставка',
     callback_data='my_delivery_points'
+)
+receipt_method_pickup_button = InlineKeyboardButton(
+    text='🛍 Заберу сам',
+    callback_data='pickup'
 )
 areas_button = InlineKeyboardButton(
     text='🆕 Новая',
     callback_data='areas'
+)
+back_to_cart = InlineKeyboardButton(
+    text='⬅️ Назад',
+    callback_data='cart'
+)
+
+receipt_method_keyboard = get_form_keyboard(
+    receipt_method_delivery_button,
+    receipt_method_pickup_button,
+    back_to_cart,
 )
