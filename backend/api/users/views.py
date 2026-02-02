@@ -1,6 +1,7 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import mixins, viewsets, status
 from rest_framework.response import Response
+from rest_framework.decorators import action
 
 from users.models import Customer, Cart, CartItem, GDPR
 from .serializers import (
@@ -65,6 +66,20 @@ class CartViewSet(mixins.CreateModelMixin,
             detail_serializer.data,
             status=status.HTTP_201_CREATED,
             headers=headers)
+
+    @action(detail=True, methods=['post'])
+    def clear(self, request, pk=None):
+        cart = self.get_object()
+
+        cart.items.all().delete()
+        cart.comment = ''
+        cart.save(update_fields=['comment'])
+
+        serializer = CartRetrieveSerializer(
+            cart,
+            context=self.get_serializer_context()
+        )
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class CartItemViewSet(mixins.ListModelMixin,
