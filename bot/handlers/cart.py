@@ -37,7 +37,7 @@ async def receipt_method_order(callback_query: CallbackQuery) -> SendMessage:
 @router.callback_query(F.data == 'clear_cart')
 async def clear_customer_cart(callback_query: CallbackQuery) -> SendMessage:
     """Очистить корзину."""
-    cart = await clear_cart()
+    cart = await clear_cart(callback_query.from_user.id)
     cart_detail = await get_cart_detail(cart)
     await safe_delete_message(callback_query.message)
     await callback_query.message.answer(
