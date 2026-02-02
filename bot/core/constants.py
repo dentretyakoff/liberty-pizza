@@ -10,7 +10,7 @@ class MessagesConstants:
     )
     ORDER_CANCELLED = '❌ Ваш заказ отменен.'
     PAYMENT_NOT_RECEIVED = '❌ Оплата не поступила, заказ отменён.'
-    PAYMENT_OK = '✅ Оплата подтверждена! Ожидайте курьера.'
+    PAYMENT_OK = '✅ Оплата подтверждена!'
     CONTACTS = '🫡 Контакты скоро появятся'
     DEFAULT_GDPR = (
         '📃 Согласие на обработку персональных данных:\n'
@@ -68,3 +68,10 @@ class PaymentMethod:
 class ReceiptMethods:
     DELIVERY = 'delivery'
     PICKUP = 'pickup'
+
+
+STATUS_ICONS = {
+    OrderStatus.PAID: '✅',
+    OrderStatus.AWAITING: '⏳',
+    OrderStatus.CANCELLED: '❌',
+}
