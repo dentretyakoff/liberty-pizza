@@ -5,7 +5,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery
 from aiogram.methods import SendMessage
 
-from api.users import get_cart, update_cart
+from api.users import get_cart, update_cart, clear_cart
 from handlers.keyboards import generate_cart_buttons, receipt_method_keyboard
 from core.constants import ReceiptMethods
 from .utils import get_cart_detail, safe_delete_message, ask_or_show_phone
@@ -32,6 +32,16 @@ async def receipt_method_order(callback_query: CallbackQuery) -> SendMessage:
             text='Способ получения',
             reply_markup=receipt_method_keyboard,
         )
+
+
+@router.callback_query(F.data == 'clear_cart')
+async def clear_customer_cart(callback_query: CallbackQuery) -> SendMessage:
+    """Очистить корзину."""
+    cart = await clear_cart()
+    cart_detail = await get_cart_detail(cart)
+    await safe_delete_message(callback_query.message)
+    await callback_query.message.answer(
+        text=cart_detail, reply_markup=generate_cart_buttons(cart))
 
 
 @router.callback_query(F.data == 'pickup')

@@ -7,7 +7,7 @@ from aiogram.types import BufferedInputFile, Message, CallbackQuery
 from aiogram.exceptions import TelegramBadRequest
 
 from api.users import get_customer
-from core.constants import MessagesConstants
+from core.constants import MessagesConstants, PaymentMethod
 from .keyboards import generate_phone_buttons
 from .states import UserForm
 
@@ -28,6 +28,17 @@ def product_list(items: list) -> tuple[str, int]:
     return product_list, count
 
 
+def get_payment_method(order: dict) -> str:
+    payment_method_display = order.get('payment_method_display')
+    payment_method = order.get('payment_method')
+    if payment_method == PaymentMethod.ROBOKASSA:
+        payment_method_display += ' ✅'
+    elif payment_method == PaymentMethod.CARD:
+        payment_method_display += ' «Оплата при получении»'
+
+    return payment_method_display
+
+
 def get_order_detail(order: dict) -> str:
     """Детали заказа."""
     order_detail = 'Детали заказа:\n'
@@ -36,6 +47,7 @@ def get_order_detail(order: dict) -> str:
     customer = order.get('customer')
     total_price = order.get('total_price')
     delivery_price = order.get('delivery_price')
+    payment_method_display = get_payment_method(order)
     if order.get('type') == 'cart':
         total = Decimal(total_price) + Decimal(delivery_price)
     else:
@@ -47,7 +59,7 @@ def get_order_detail(order: dict) -> str:
             f'{order.get("delivery_price")} руб.\n')
     order_detail += (
         f'\nИтого: {total} руб.\n'
-        f'Способ оплаты: {order.get("payment_method_display")}\n\n'
+        f'Способ оплаты: {payment_method_display}\n\n'
         f'Комментарий: {order.get("comment")}\n\n')
     if delivery_point:
         order_detail += (

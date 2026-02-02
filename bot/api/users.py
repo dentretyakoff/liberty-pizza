@@ -47,6 +47,14 @@ async def update_cart(telegram_id: int, data: dict):
     return cart
 
 
+async def clear_cart(telegram_id: int):
+    """Очищает корзину клиента."""
+    data = {}
+    cart = await async_session(
+        f'customers/cart/{telegram_id}/clear/', 'POST', data)
+    return cart
+
+
 async def delete_cartitem(cartitem_id: int):
     """Удаляет продукт из корзины."""
     await async_session(
