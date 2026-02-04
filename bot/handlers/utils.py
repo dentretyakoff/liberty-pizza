@@ -7,7 +7,7 @@ from aiogram.types import BufferedInputFile, Message, CallbackQuery
 from aiogram.exceptions import TelegramBadRequest
 
 from api.users import get_customer
-from core.constants import MessagesConstants, PaymentMethod
+from core.constants import MessagesConstants, PaymentMethod, OrderStatus
 from .keyboards import generate_phone_buttons
 from .states import UserForm
 
@@ -31,10 +31,12 @@ def product_list(items: list) -> tuple[str, int]:
 def get_payment_method(order: dict) -> str:
     payment_method_display = order.get('payment_method_display')
     payment_method = order.get('payment_method')
-    if payment_method == PaymentMethod.ROBOKASSA:
-        payment_method_display += ' ✅'
-    elif payment_method == PaymentMethod.CARD:
-        payment_method_display += ' «Оплата при получении»'
+    status = order.get('status')
+    if status == OrderStatus.PAID:
+        if payment_method == PaymentMethod.ROBOKASSA:
+            payment_method_display += ' ✅'
+        elif payment_method == PaymentMethod.CARD:
+            payment_method_display += ' «Оплата при получении»'
 
     return payment_method_display
 
