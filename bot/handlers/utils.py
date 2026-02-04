@@ -32,11 +32,11 @@ def get_payment_method(order: dict) -> str:
     payment_method_display = order.get('payment_method_display')
     payment_method = order.get('payment_method')
     status = order.get('status')
-    if status == OrderStatus.PAID:
-        if payment_method == PaymentMethod.ROBOKASSA:
+    if payment_method == PaymentMethod.ROBOKASSA:
+        if status == OrderStatus.PAID:
             payment_method_display += ' ✅'
-        elif payment_method == PaymentMethod.CARD:
-            payment_method_display += ' «Оплата при получении»'
+    elif payment_method == PaymentMethod.CARD:
+        payment_method_display += ' «Оплата при получении»'
 
     return payment_method_display
 
