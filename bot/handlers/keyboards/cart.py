@@ -27,7 +27,7 @@ receipt_method_pickup_button = InlineKeyboardButton(
     callback_data='pickup'
 )
 areas_button = InlineKeyboardButton(
-    text='🆕 Новая',
+    text='🆕 Выбрать',
     callback_data='areas'
 )
 back_to_cart = InlineKeyboardButton(
