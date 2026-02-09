@@ -118,6 +118,9 @@ async def input_entrance_number(
 @router.callback_query(F.data == 'my_delivery_points')
 async def my_delivery_points(callback_query: CallbackQuery) -> SendMessage:
     """Список точек доставки клиента."""
+    await update_cart(
+        callback_query.from_user.id,
+        {'receipt_method_type': ReceiptMethods.DELIVERY})
     data = await get_my_delivery_points(callback_query.from_user.id)
     delivery_points = data.get('results')
     await callback_query.message.edit_text(
@@ -132,7 +135,4 @@ async def set_delivery_point(
     """Запоминает выбранную точку доставки клиента."""
     delivery_point_id = int(callback_query.data.split('_')[-1])
     await set_my_delivery_point(delivery_point_id)
-    await update_cart(
-        callback_query.from_user.id,
-        {'receipt_method_type': ReceiptMethods.DELIVERY})
     await ask_or_show_phone(callback_query, state)
