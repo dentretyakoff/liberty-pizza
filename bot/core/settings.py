@@ -22,3 +22,5 @@ ORDER_MAX_LIFE_TIME = int(os.getenv('EXPIRATION_DATE', 1200))
 PAGE_SIZE = int(os.getenv('PAGE_SIZE', 10))
 # Группа для отправки заказов
 GROUP_ID = os.getenv('GROUP_ID')
+
+TIME_ZONE = os.getenv('TIME_ZONE', 'Europe/Moscow')
