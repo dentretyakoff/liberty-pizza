@@ -10,7 +10,7 @@ from handlers.delivery_points import router as delivery_points_router
 from handlers.orders import router as orders_router
 from handlers.users import router as users_router
 from handlers.contacts import router as contacts_router
-from middlewares.only_private import OnlyPrivateMiddleware
+from middlewares import OnlyPrivateMiddleware, WorkingHoursMiddleware
 
 
 async def setup_bot_commands(bot: Bot) -> None:
@@ -43,3 +43,5 @@ def setup_middleware(dispatcher: Dispatcher) -> None:
     """Регистрация middleware."""
     dispatcher.message.middleware(OnlyPrivateMiddleware())
     dispatcher.callback_query.middleware(OnlyPrivateMiddleware())
+    dispatcher.message.middleware(WorkingHoursMiddleware())
+    dispatcher.callback_query.middleware(WorkingHoursMiddleware())
