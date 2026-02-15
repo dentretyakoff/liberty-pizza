@@ -1,6 +1,20 @@
+from datetime import time
+
+
 class WorkingHours:
-    START = 10
-    END = 20
+    START_HOUR = 10
+    START_MINUTE = 00
+
+    END_HOUR = 23
+    END_MINUTE = 45
+
+    @classmethod
+    def start_time(cls) -> time:
+        return time(cls.START_HOUR, cls.START_MINUTE)
+
+    @classmethod
+    def end_time(cls) -> time:
+        return time(cls.END_HOUR, cls.END_MINUTE)
 
 
 class MessagesConstants:
@@ -27,7 +41,10 @@ class MessagesConstants:
         'Нажмите «Cогласен», чтобы продолжить.'
     )
     WORKING_HOURS_MESSAGE = (
-        f'Мы работаем с {WorkingHours.START}:00 до {WorkingHours.END}:00 🙂'
+        f'Мы работаем с '
+        f'{WorkingHours.START_HOUR:02d}:{WorkingHours.START_MINUTE:02d} '
+        f'до '
+        f'{WorkingHours.END_HOUR:02d}:{WorkingHours.END_MINUTE:02d} 🙂'
     )
 
 

@@ -1,4 +1,4 @@
-from datetime import datetime, time
+from datetime import datetime
 
 import pytz
 from aiogram import BaseMiddleware
@@ -9,8 +9,8 @@ from core.settings import TIME_ZONE
 
 class WorkingHoursMiddleware(BaseMiddleware):
     def __init__(self):
-        self.start = time(WorkingHours.START)
-        self.end = time(WorkingHours.END)
+        self.start = WorkingHours.start_time()
+        self.end = WorkingHours.end_time()
         self.tz = pytz.timezone(TIME_ZONE)
 
     async def __call__(self, handler, event, data):
