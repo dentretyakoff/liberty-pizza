@@ -99,3 +99,11 @@ volumes:
   redis_data:
   static:
   media:
+
+networks:
+  default:
+    enable_ipv6: true
+    ipam:
+      config:
+        - subnet: 172.28.0.0/16        # IPv4 — внутренний трафик, как раньше
+        - subnet: fd7a:b3c9:d1e4::/64  # ULA — исходящий IPv6 через NAT66 (обход блокировки IPv4)
